@@ -21,7 +21,8 @@
     "mongoose": "3.8.x",
     "node-uuid": "1.4.1",
     "react": "^0.13.3",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "tf-idf-wiki-lists": "git://github.com/01track1mp3/tf-idf-wiki-lists.git"
   },
   "devDependencies": {
     "babelify": "^6.1.2",

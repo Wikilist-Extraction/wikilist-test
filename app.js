@@ -8,7 +8,7 @@ var express = require('express')
   , args = process.argv.splice(2);
 
 app.use(express.static(__dirname + '/public'));
-
+router.use(bodyParser.json());
 require("./db/db").once('open', function callback () {
 	/*=== insert routes here ===*/
 	require("./all.routes")(router);

@@ -15,18 +15,18 @@ var ManualEvaluationsCtrl = {
 		});
 	},
 	fetch : function(req, res) {
-		ManualEvaluation.find({_id:req.params.id}, function (err, manualevaluations) {
+		ManualEvaluation.find({listId:req.params.id}, function (err, manualevaluations) {
 			res.send(manualevaluations[0]);
 		});
 	},
 	update : function(req, res) {
 		delete req.body._id
-		ManualEvaluation.update({_id:req.params.id}, req.body, function (err, manualevaluation) {
+		ManualEvaluation.update({listId:req.params.id}, req.body, function (err, manualevaluation) {
 			res.send(manualevaluation);
 		});
 	},
 	delete : function(req, res) {
-		ManualEvaluation.findOneAndRemove({_id:req.params.id}, function (err, manualevaluation) {
+		ManualEvaluation.findOneAndRemove({listId:req.params.id}, function (err, manualevaluation) {
 			res.send(manualevaluation);
 		});
 	}
