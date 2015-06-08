@@ -11,7 +11,6 @@ function promisedTfIdf(resources) {
   return new Promise(function(resolve) {
     tfIdf(resources, function(results, counts) {
       resolve(results);
-      tfIdfCounts = counts;
     });
   });
 };
