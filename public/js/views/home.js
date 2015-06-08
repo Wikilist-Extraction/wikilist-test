@@ -2,18 +2,18 @@ import React from 'react';
 
 const listsUrl = '/api/lists';
 
-class Home extends React.Component {
+const Home = React.createClass({
 
   getInitialState() {
     return {
       lists: []
     };
-  }
+  },
 
   componentDidMount() {
     fetch(listsUrl)
       .then((response) => console.log(response))
-  }
+  },
 
   render() {
     return (
@@ -22,6 +22,6 @@ class Home extends React.Component {
       </div>
     );
   }
-}
+});
 
 module.exports = Home;
