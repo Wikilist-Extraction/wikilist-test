@@ -23,14 +23,15 @@ const Home = React.createClass({
     return {
       lists: [],
       hasFetched: false,
-      currentList: 0
+      currentListNumber: 0
     };
   },
 
   componentDidMount() {
     fetch(listsUrl)
       .then(response => response.json())
-      .then(json => this.setState({lists: json, hasFetched: true}));
+      .then(json => this.setState({lists: json, hasFetched: true}))
+      .catch(error => console.log(error));
   },
 
   onNext() {
@@ -43,13 +44,13 @@ const Home = React.createClass({
     //     return <ListItem listName={listString} key={listString}/>
     // });
     const lists = this.state.lists;
-    const currentList = this.state.currentList;
+    const currentListNumber = this.state.currentListNumber;
 
     let element;
-    if (currentList >= lists.length) {
+    if (currentListNumber >= lists.length) {
       element = <p>Validation finished</p>
     } else if (this.state.hasFetched) {
-      element = <Validation listName={lists[currentList]} onNext={this.onNext}/>
+      element = <Validation listName={lists[currentListNumber]} onNext={this.onNext}/>
     } else {
       element = <p>Fetching lists</p>
     }
