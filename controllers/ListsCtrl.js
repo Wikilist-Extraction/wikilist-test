@@ -9,10 +9,7 @@ function listIdFromFilename(filename) {
 
 var ListsCtrl = {
 	fetchAll : function(req, res) {
-		return _.map(
-			fs.readdirSync(__dirname + "/../lists"),
-			listIdFromFilename
-		);
+		res.json( _.map(fs.readdirSync(__dirname + "/../lists"), listIdFromFilename) );
 	}
 }
 
