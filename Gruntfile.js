@@ -3,15 +3,18 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     browserify: {
 	    options:{
-		    transform: [ require('grunt-react').browserify ]
+		    transform: [
+          require('grunt-react').browserify,
+          ["babelify", { "stage": 0 }]
+         ]
 	    },
 		  client: {
-			  src: ['public/js/react_components/**/*.js', 'public/js/modules/main.js'],
+			  src: ['public/js/components/**/*.js', 'public/js/views/*.js', "public/js/core/*.js"],
 			  dest: 'public/js/app.built.js'
 		  }
     },
     watch: {
-      files: [ "public/js/modules/**/*.js", "public/js/shims/**/*.js", "public/js/react_components/*.js"],
+      files: [ "public/js/views/**/*.js", "public/js/shims/**/*.js", "public/js/components/**/.js", "public/js/core/*.js"],
       tasks: [ 'browserify' ]
     }
   })

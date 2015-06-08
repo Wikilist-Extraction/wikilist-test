@@ -1,3 +1,4 @@
 node_modules
 public/js/bower_components
+public/js/app.built.js
 *.log
