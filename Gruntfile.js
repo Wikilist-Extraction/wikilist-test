@@ -13,11 +13,30 @@ module.exports = function(grunt) {
 			  dest: 'public/js/app.built.js'
 		  }
     },
+    express: {
+      dev: {
+        options: {
+          script: "app.js"
+        }
+      }
+    },
     watch: {
-      files: [ "public/js/views/**/*.js", "public/js/shims/**/*.js", "public/js/components/**/*.js", "public/js/core/*.js", "public/js/stores/*.js", "public/js/actions/*.js"],
-      tasks: [ 'browserify' ]
+      frontend: {
+        files: [ "public/js/views/**/*.js", "public/js/shims/**/*.js", "public/js/components/**/.js", "public/js/core/*.js", "public/js/stores/*.js", "public/js/actions/*.js"],
+        tasks: [ 'browserify' ]
+      },
+      backend: {
+        files: [ "routes/**/*.js", "models/**/*.js", "controller/**/*.js", "app.js" ],
+        tasks: [ "express:dev" ],
+        options: {
+         spawn: false
+        }
+      }
     }
-  })
-  grunt.loadNpmTasks('grunt-browserify')
-  grunt.loadNpmTasks('grunt-contrib-watch')
+  });
+  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-express-server');
+
+  grunt.registerTask("dev", [ "express:dev", "browserify", "watch" ]);
 }
