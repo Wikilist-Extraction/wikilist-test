@@ -3,6 +3,21 @@
 var ManualEvaluation = require("../models/ManualEvaluation")();
 
 var ManualEvaluationsCtrl = {
+	exists : function(listId, callback) {
+		if (typeof callback !== "function") {
+			throw "Provide callback parameter as function";
+		}
+
+		ManualEvaluation.find({ listId: listId }, function(error, lists) {
+			if (error !== null) {
+				throw error;
+			}
+
+			callback(lists.length > 0);
+		});
+	},
+
+
 	create : function(req, res) {
 		var manualevaluation = new ManualEvaluation(req.body)
 			manualevaluation.save(function (err, manualevaluation) {
