@@ -28,7 +28,33 @@ function getListNamesWithStatus() {
 	});
 }
 
+var NOT_FOUND_RESPONSE = {
+  "status": "not_found",
+  "message": "Resource was not found"
+};
+
+function getResourceById(listId) {
+  try {
+    return require("../lists/"+listId+".js");
+  } catch(e) {
+    if (e.code === "MODULE_NOT_FOUND") {
+      return null;
+    }
+
+    throw e;
+  }
+}
+
 var ListsCtrl = {
+	fetch: function(req, res) {
+		var resource = getResourceById(req.params.id);
+
+		if (resource === null) {
+      res.json(_.extend({}, NOT_FOUND_RESPONSE, { resource: listId }));
+    }
+
+		res.json(resource);
+	},
 	fetchAll : function(req, res) {
 		res.json(getListNames());
 	},
