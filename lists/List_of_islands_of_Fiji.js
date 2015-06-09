@@ -1,4 +1,4 @@
 
-module.exports = ["http://en.dbpedia.org/resource/Geography_of_Fiji"]
+module.exports = ["http://dbpedia.org/resource/Geography_of_Fiji"]
 
           

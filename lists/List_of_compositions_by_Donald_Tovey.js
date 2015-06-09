@@ -1,4 +1,4 @@
 
-module.exports = ["http://en.dbpedia.org/resource/Robert_Hausmann"]
+module.exports = ["http://dbpedia.org/resource/Robert_Hausmann"]
 
           
