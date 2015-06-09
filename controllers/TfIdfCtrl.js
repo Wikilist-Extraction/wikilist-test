@@ -33,9 +33,17 @@ function renameResults(results) {
   });
 }
 
+var cache = {};
+
 var TfIdfCtrl = {
 	fetch : function(req, res) {
 		var listId = req.params.id;
+
+    if (listId in cache) {
+      res.json(cache[listId]);
+      return;
+    }
+
     var listOfResources = getResourceById(listId);
 
     if (listOfResources === null) {
@@ -44,7 +52,10 @@ var TfIdfCtrl = {
 
     promisedTfIdf(listOfResources)
       .then(renameResults)
-      .then(function(results) { res.json(results); });
+      .then(function(results) {
+        cache[listId] = results;
+        res.json(results);
+      });
 	}
 }
 

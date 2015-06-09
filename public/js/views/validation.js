@@ -1,16 +1,23 @@
-import React from 'react';
-import {Button} from 'react-bootstrap';
+import React from 'react/addons';
+import _ from 'lodash';
+import {Button, Table, Glyphicon} from 'react-bootstrap';
+
+import TypeListItem from '../components/typeListItem';
 
 // import listStore from '../stores/listStore';
 // import listActions from '../actions/listActions';
 
 const listUrl = '/api/tfidf/';
+const postUrl = '/api/evaluation';
+
+const wikiPrefix = 'http://en.wikipedia.org/wiki/';
 
 const Validation = React.createClass({
 
   getInitialState() {
     return {
       types: [],
+      approvedTypes: [],
       hasFetched: false,
       hasError: false,
       errorText: ''
@@ -18,23 +25,55 @@ const Validation = React.createClass({
   },
 
   componentDidMount() {
-    console.log("new fetch");
     const url = listUrl + this.props.listName;
     fetch(url)
       .then(response => response.json())
       .then(json => this.setState({types: json, hasFetched: true}))
       .catch(error => {
-        console.log(error);
         this.setState({
           hasFetched: true,
           hasError: true,
           errorText: error
-        })
+        });
       });
   },
 
+  onApprovedType(typeUri) {
+    const newState = React.addons.update(this.state, {
+      approvedTypes : {
+        $push : [typeUri]
+      }
+    });
+
+    this.setState(newState);
+  },
+
+  onDeclineType(typeUri) {
+    const index = this.state.approvedTypes.indexOf(typeUri);
+    const newState = React.addons.update(this.state, {
+      approvedTypes : {
+        $splice : [[index, 1]]
+      }
+    });
+
+    this.setState(newState);
+  },
+
   onSubmit() {
-    // post result
+    const postObj = {
+      listId: this.props.listName,
+      types: this.state.approvedTypes
+    };
+    console.log(postObj);
+
+    fetch(postUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postObj)
+    });
+
     this.props.onNext();
   },
 
@@ -43,14 +82,36 @@ const Validation = React.createClass({
     const types = state.types;
     const listName = this.props.listName;
 
-    console.log(types);
+    console.log(state);
 
     let body;
     let buttonDisabled = true;
     if (state.hasError) {
       body = <p>An error occured: {state.errorText}</p>
     } else if (state.hasFetched) {
-      body = state.types
+
+      const sortedTypeObjects = _.sortByOrder(state.types, 'tfIdf', false);
+      const typeRows = sortedTypeObjects.map(typeObject => {
+        return <TypeListItem
+          typeObject={typeObject}
+          onApprove={this.onApprovedType}
+          onDecline={this.onDeclineType}
+          key={typeObject.typeUri} />;
+      });
+      body = (
+        <Table>
+          <thead>
+            <th>Label</th>
+            <th>Uri</th>
+            <th>count</th>
+            <th>tfIdf</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {typeRows}
+          </tbody>
+        </Table>
+      )
       buttonDisabled = false;
     } else {
       body = <p>Fetching types...</p>
@@ -58,7 +119,7 @@ const Validation = React.createClass({
 
     return (
       <div>
-        <h2>{listName}</h2>
+        <h2><a href={wikiPrefix + listName}>{listName}</a></h2>
         {body}
         <Button onClick={this.onSubmit} disabled={buttonDisabled}>Submit</Button>
       </div>
