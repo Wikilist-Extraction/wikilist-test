@@ -50,7 +50,8 @@ const Home = React.createClass({
     if (currentListNumber >= lists.length) {
       element = <p>Validation finished</p>
     } else if (this.state.hasFetched) {
-      element = <Validation listName={lists[currentListNumber]} onNext={this.onNext}/>
+      const listName = lists[currentListNumber];
+      element = <Validation listName={listName} onNext={this.onNext} key={listName}/>
     } else {
       element = <p>Fetching lists</p>
     }
