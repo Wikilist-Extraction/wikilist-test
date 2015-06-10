@@ -131,6 +131,7 @@ const Validation = React.createClass({
             <th>count</th>
             <th>tfIdf</th>
             <th></th>
+            <th></th>
           </thead>
           <tbody>
             {typeRows}
@@ -146,7 +147,7 @@ const Validation = React.createClass({
       <div>
         <h2><a href={wikiPrefix + listName}>{listName}</a></h2>
         {body}
-        <Button onClick={this.onSubmit} disabled={buttonDisabled}>Submit</Button>
+        <Button className="pull-right" onClick={this.onSubmit} disabled={buttonDisabled}>Submit</Button>
       </div>
     );
   }

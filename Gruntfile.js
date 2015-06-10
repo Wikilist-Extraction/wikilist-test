@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     },
     watch: {
       frontend: {
-        files: [ "public/js/views/**/*.js", "public/js/shims/**/*.js", "public/js/components/**/.js", "public/js/core/*.js", "public/js/stores/*.js", "public/js/actions/*.js"],
+        files: [ "public/js/views/**/*.js", "public/js/shims/**/*.js", "public/js/components/**/*.js", "public/js/core/*.js", "public/js/stores/*.js", "public/js/actions/*.js"],
         tasks: [ 'browserify' ]
       },
       backend: {
