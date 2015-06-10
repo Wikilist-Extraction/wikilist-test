@@ -6,9 +6,18 @@ var ListCacheCtrl = require("./ListCacheCtrl");
 var CacheCtrl = {};
 
 _.extend(CacheCtrl, {
-  DONE_WARMUP_RESPONSE: {
+  START_WARMUP_RESPONSE: {
     "status": "in_progress",
-    "message": "All list results are currently fetched and cached."
+    "message": "Started fetching and caching all list results."
+  },
+  isCaching: false,
+  currentlyCachingList: "",
+
+  inProgressRespone : function() {
+    return {
+      "status": "in_progress",
+      "message": "Currently caching: " + CacheCtrl.currentlyCachingList
+    }
   },
 
 	fetchAndCacheList : function(listId) {
@@ -24,6 +33,7 @@ _.extend(CacheCtrl, {
 
 		_.each(allLists, function(listId) {
 			console.log("Currently caching", listId);
+      CacheCtrl.currentlyCachingList = listId;
 			CacheCtrl.fetchAndCacheList(listId);
 		});
 
@@ -32,8 +42,13 @@ _.extend(CacheCtrl, {
 
 
 	warmup : function(req, res) {
-		res.json(CacheCtrl.DONE_WARMUP_RESPONSE);
+    if (CacheCtrl.isCaching) {
+      return res.json(CacheCtrl.inProgressRespone());
+    }
+		res.json(CacheCtrl.START_WARMUP_RESPONSE);
+    CacheCtrl.isCaching = true;
 		CacheCtrl.cacheAllLists();
+    CacheCtrl.isCaching = false;
 	}
 });
 
