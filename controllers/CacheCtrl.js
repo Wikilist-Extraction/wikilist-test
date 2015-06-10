@@ -7,8 +7,8 @@ var CacheCtrl = {};
 
 _.extend(CacheCtrl, {
   DONE_WARMUP_RESPONSE: {
-    "status": "done",
-    "message": "All list results were fetched and cached."
+    "status": "in_progress",
+    "message": "All list results are currently fetched and cached."
   },
 
 	fetchAndCacheList : function(listId) {
