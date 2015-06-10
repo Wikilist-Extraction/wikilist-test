@@ -4,71 +4,69 @@ var fs = require("fs");
 var _ = require("lodash");
 var ManualEvaluationCtrl = require("./ManualEvaluationsCtrl");
 
-function listExists(listId) {
-	return new Promise(function(resolve) {
-		ManualEvaluationCtrl.exists(listId, function(exists) { resolve(exists); });
-	});
-}
+var ListsCtrl = {};
 
-function listIdFromFilename(filename) {
-	return filename.replace(".js", "");
-}
+_.extend(ListsCtrl, {
+	NOT_FOUND_RESPONSE: {
+	  "status": "not_found",
+	  "message": "Resource was not found"
+	},
 
-function isJsFile(file) {
-	var tokens = file.split(".");
-	return tokens[tokens.length - 1] == "js";
-}
+	getResourceById: function(listId) {
+	  try {
+	    return require("../lists/"+listId+".js");
+	  } catch(e) {
+	    if (e.code === "MODULE_NOT_FOUND") {
+	      return null;
+	    }
 
-function getListNames() {
-	var jsFiles = _.filter(fs.readdirSync(__dirname + "/../lists"), isJsFile);
-	return _.map(jsFiles, listIdFromFilename);
-}
+	    throw e;
+	  }
+	},
 
-function getListNamesWithStatus() {
-	var listNames = getListNames();
-	return _.map(listNames, function(listId) {
-		return listExists(listId)
-			.then(function(exists) {
-				return { listId: listId, validated: exists };
-			});
-	});
-}
+	listExists: function (listId) {
+		return ManualEvaluationCtrl.exists(listId);
+	},
 
-var NOT_FOUND_RESPONSE = {
-  "status": "not_found",
-  "message": "Resource was not found"
-};
+	listIdFromFilename: function (filename) {
+		return filename.replace(".js", "");
+	},
 
-function getResourceById(listId) {
-  try {
-    return require("../lists/"+listId+".js");
-  } catch(e) {
-    if (e.code === "MODULE_NOT_FOUND") {
-      return null;
-    }
+	isJsFile: function (file) {
+		var tokens = file.split(".");
+		return tokens[tokens.length - 1] == "js";
+	},
 
-    throw e;
-  }
-}
+	getListNames: function () {
+		var jsFiles = _.filter(fs.readdirSync(__dirname + "/../lists"), ListsCtrl.isJsFile);
+		return _.map(jsFiles, ListsCtrl.listIdFromFilename);
+	},
 
-var ListsCtrl = {
-	fetch: function(req, res) {
-		var resource = getResourceById(req.params.id);
+	getListNamesWithStatus: function () {
+		var listNames = ListsCtrl.getListNames();
+		return _.map(listNames, function(listId) {
+			return { listId: listId, validated: ListsCtrl.listExists(listId) };
+		});
+	},
+
+
+	fetch: function (req, res) {
+		var resource = ListsCtrl.getResourceById(req.params.id);
 
 		if (resource === null) {
-      res.json(_.extend({}, NOT_FOUND_RESPONSE, { resource: listId }));
+      res.json(_.extend({}, ListsCtrl.NOT_FOUND_RESPONSE, { resource: listId }));
     }
 
 		res.json(resource);
 	},
-	fetchAll : function(req, res) {
-		res.json(getListNames());
+
+	fetchAll : function (req, res) {
+		res.json(ListsCtrl.getListNames());
 	},
-	fetchAllWithStatus : function(req, res) {
-		Promise
-			.all(getListNamesWithStatus())
-			.then(function(listNamesWithStatus) { res.json(listNamesWithStatus); });
+
+	fetchAllWithStatus : function (req, res) {
+		res.json(ListsCtrl.getListNamesWithStatus());
 	}
-}
+});
 
 module.exports = ListsCtrl;

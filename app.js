@@ -7,9 +7,14 @@ var express = require('express')
   , http_port = 3000
   , args = process.argv.splice(2);
 
+var Utils = require("./middleware/Utils");
+
 app.use(express.static(__dirname + '/public'));
+
 router.use(bodyParser.json());
-require("./db/db").once('open', function callback () {
+router.use(Utils.fiber);
+
+require("./db/db").once('open', function callback() {
 	/*=== insert routes here ===*/
 	require("./all.routes")(router);
 });

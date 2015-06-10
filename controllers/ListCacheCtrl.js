@@ -5,23 +5,18 @@ var sync = require("synchronize");
 
 var ListCacheCtrl = {
 	cacheContainsList : function(listId) {
-		return sync.await(ListCache.find({ listId: listId }, function(error, lists) {
-			if (error !== null) {
-				throw error;
-			}
-
-			sync.defer(lists.length > 0);
-		}));
+		var lists = sync.await( ListCache.find({ listId: listId }, sync.defer()) );
+		return lists.length > 0;
 	},
 
 	getListFromCache : function(listId) {
-		return sync.await( ListCache.find({listId:req.params.id}, function (err, list) {
-      if (error !== null) {
-        throw error;
-      }
+		var lists = sync.await( ListCache.find({ listId: listId }, sync.defer()) );
+		return lists[0].cache;
+	},
 
-			sync.defer(list[0].cache);
-		}));
+	addListToCache : function(listId, results) {
+		var cachedList = new ListCache({ listId: listId, cache: results })
+		return sync.await( cachedList.save(sync.defer()) );
 	}
 }
 

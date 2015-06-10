@@ -1,7 +1,9 @@
 /*=== TfIdf Controller ===*/
 var _ = require("lodash");
+var sync = require("synchronize");
 var tfIdf = require("tf-idf-wiki-lists").tfIdf;
 var ListCacheCtrl = require("../controllers/ListCacheCtrl");
+var ListsCtrl = require("../controllers/ListsCtrl");
 var Promise = require("bluebird");
 
 var NOT_FOUND_RESPONSE = {
@@ -9,52 +11,36 @@ var NOT_FOUND_RESPONSE = {
   "message": "Resource was not found"
 };
 
-function promisedTfIdf(resources) {
-  return new Promise(function(resolve) {
-    tfIdf(resources, function(results, counts) {
-      resolve(results);
-    });
-  });
-};
-
-function getResourceById(listId) {
-  try {
-    return require("../lists/"+listId+".js");
-  } catch(e) {
-    if (e.code === "MODULE_NOT_FOUND") {
-      return null;
-    }
-
-    throw e;
+function syncTfIdf(listOfResources) {
+  function errorWrappedTfIdf(listOfResources, callback) {
+    tfIdf(listOfResources, function(results, counts) { callback(null, results, counts); })
   }
-}
 
-function renameResults(results) {
-  return _.map(results, function(result) {
-    return result;
-  });
+  return sync.await(errorWrappedTfIdf(listOfResources, sync.defer()));
 }
 
 var TfIdfCtrl = {
 	fetch : function(req, res) {
 		var listId = req.params.id;
-    var listOfResources = getResourceById(listId);
+    var listOfResources = ListsCtrl.getResourceById(listId);
 
     if (ListCacheCtrl.cacheContainsList(listId)) {
+      console.log("Return TfIdf Results from cache:", listId);
       res.json(ListCacheCtrl.getListFromCache(listId));
       return;
     }
 
     if (listOfResources === null) {
-      res.json(_.extend({}, NOT_FOUND_RESPONSE, { resource: listId }));
+      console.log("No Resource found:", listId);
+      res.json(_.extend({}, ListsConroller.NOT_FOUND_RESPONSE, { resource: listId }));
+      return;
     }
 
-    promisedTfIdf(listOfResources)
-      .then(renameResults)
-      .then(function(results) {
-        ListCachCtrl.addListToCache(listId, results);
-        res.json(results);
-      });
+    console.log("Fetching TfIdf Results ... ", listId);
+    var results = syncTfIdf(listOfResources);
+    ListCacheCtrl.addListToCache(listId, results);
+    console.log("... done!");
+    res.json(results);
 	}
 }
 
