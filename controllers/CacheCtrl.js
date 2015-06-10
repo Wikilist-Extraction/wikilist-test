@@ -32,8 +32,8 @@ _.extend(CacheCtrl, {
 
 
 	warmup : function(req, res) {
-		CacheCtrl.cacheAllLists();
 		res.json(CacheCtrl.DONE_WARMUP_RESPONSE);
+		CacheCtrl.cacheAllLists();
 	}
 });
 
