@@ -11,6 +11,10 @@ const TypeListItem = React.createClass({
   },
 
   handleOnClickApprove() {
+    if (this.state.isDeclined) {
+      return;
+    }
+
     const isApproved = !this.state.isApproved;
     const typeUri = this.props.typeObject.typeUri;
 
@@ -24,6 +28,10 @@ const TypeListItem = React.createClass({
   },
 
   handleOnClickDecline() {
+    if (this.state.isApproved) {
+      return;
+    }
+
     const isDeclined = !this.state.isDeclined;
     const typeUri = this.props.typeObject.typeUri;
 
@@ -53,8 +61,8 @@ const TypeListItem = React.createClass({
         <td>{typeObj.typeUri}</td>
         <td>{typeObj.count}</td>
         <td>{typeObj.tfIdf}</td>
-        <td><Button bsStyle={approveButtonStyle} onClick={this.handleOnClickApprove}>{approveButtonName}</Button></td>
-        <td><Button bsStyle={declineButtonStyle} onClick={this.handleOnClickDecline}>{declineButtonName}</Button></td>
+        <td><Button bsStyle={approveButtonStyle} onClick={this.handleOnClickApprove} disabled={this.state.isDeclined}>{approveButtonName}</Button></td>
+        <td><Button bsStyle={declineButtonStyle} onClick={this.handleOnClickDecline} disabled={this.state.isApproved}>{declineButtonName}</Button></td>
       </tr>
     );
   }

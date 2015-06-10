@@ -1,24 +1,11 @@
 import React from 'react';
-
+import {Glyphicon, ButtonGroup, Button} from 'react-bootstrap';
 import Validation from './validation';
-import {Glyphicon} from 'react-bootstrap';
-// import {ListGroup, Button} from 'react-bootstrap';
-// import ListItem from '../components/listItem';
-// import {ButtonLink} from 'react-router-bootstrap';
-// import ReactStateMagicMixin from "alt/mixins/ReactStateMagicMixin.js";
 
-// import ListStore from '../stores/listStore';
-// import ListActions from '../actions/listActions';
 
 const listsUrl = '/api/lists';
 
 const Home = React.createClass({
-
-  // mixins : [ReactStateMagicMixin],
-  //
-  // statics : {
-  //   registerStore: ListStore
-  // },
 
   getInitialState() {
     return {
@@ -45,12 +32,22 @@ const Home = React.createClass({
     this.setState({currentListNumber: currentListNumber - 1});
   },
 
+  isFirst() {
+    return this.state.currentListNumber == 0;
+  },
+
+  isLast() {
+    return this.state.currentListNumber == this.state.lists.length - 1;
+  },
+
+
   render() {
     // const listElems = this.state.lists.map((listString) => {
     //     return <ListItem listName={listString} key={listString}/>
     // });
     const lists = this.state.lists;
     const currentListNumber = this.state.currentListNumber;
+
 
     let element;
     if (currentListNumber >= lists.length) {
@@ -59,11 +56,10 @@ const Home = React.createClass({
       const listName = lists[currentListNumber];
       element = (
         <div>
-          <div>
-            <Glyphicon onClick={this.onPrevious} glyph='arrow-left' />
-            &nbsp;
-            <Glyphicon onClick={this.onNext} glyph='arrow-right' />
-          </div>
+          <ButtonGroup>
+            <Button onClick={this.onPrevious} disabled={this.isFirst()}><Glyphicon glyph='arrow-left' /></Button>
+            <Button onClick={this.onNext} disabled={this.isLast()}><Glyphicon glyph='arrow-right' /></Button>
+          </ButtonGroup>
           <Validation listName={listName} onNext={this.onNext} key={listName}/>
         </div>
       )
