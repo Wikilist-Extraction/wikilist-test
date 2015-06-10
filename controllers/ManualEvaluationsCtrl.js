@@ -10,8 +10,9 @@ var ManualEvaluationsCtrl = {
 
 
 	create : function(req, res) {
-		var manualevaluation = new ManualEvaluation(req.body)
-			manualevaluation.save(function (err, manualevaluation) {
+		var manualevaluation = new ManualEvaluation(req.body);
+		manualevaluation.save(function (err, manualevaluation) {
+			console.log("Saved data for: ", manualevaluation.listId);
 			res.send(manualevaluation);
 		});
 	},
@@ -29,8 +30,9 @@ var ManualEvaluationsCtrl = {
 	},
 
 	update : function (req, res) {
-		delete req.body._id
+		delete req.body._id;
 		ManualEvaluation.update({listId:req.params.id}, req.body, function (err, manualevaluation) {
+			console.log("Update data for:", manualevaluation.listId);
 			res.send(manualevaluation);
 		});
 	},

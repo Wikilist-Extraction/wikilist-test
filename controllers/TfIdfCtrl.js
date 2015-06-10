@@ -4,22 +4,19 @@ var sync = require("synchronize");
 var tfIdf = require("tf-idf-wiki-lists").tfIdf;
 var ListCacheCtrl = require("../controllers/ListCacheCtrl");
 var ListsCtrl = require("../controllers/ListsCtrl");
-var Promise = require("bluebird");
 
-var NOT_FOUND_RESPONSE = {
-  "status": "not_found",
-  "message": "Resource was not found"
-};
+var TfIdfCtrl = {};
 
-function syncTfIdf(listOfResources) {
-  function errorWrappedTfIdf(listOfResources, callback) {
-    tfIdf(listOfResources, function(results, counts) { callback(null, results, counts); })
-  }
+_.extend(TfIdfCtrl, {
+  syncTfIdf: function (listOfResources) {
+    function errorWrappedTfIdf(listOfResources, callback) {
+      tfIdf(listOfResources, function(results, counts) { callback(null, results, counts); })
+    }
 
-  return sync.await(errorWrappedTfIdf(listOfResources, sync.defer()));
-}
+    return sync.await(errorWrappedTfIdf(listOfResources, sync.defer()));
+  },
 
-var TfIdfCtrl = {
+
 	fetch : function(req, res) {
 		var listId = req.params.id;
     var listOfResources = ListsCtrl.getResourceById(listId);
@@ -37,11 +34,11 @@ var TfIdfCtrl = {
     }
 
     console.log("Fetching TfIdf Results ... ", listId);
-    var results = syncTfIdf(listOfResources);
+    var results = TfIdfCtrl.syncTfIdf(listOfResources);
     ListCacheCtrl.addListToCache(listId, results);
     console.log("... done!");
     res.json(results);
 	}
-}
+});
 
 module.exports = TfIdfCtrl;

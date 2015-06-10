@@ -12,7 +12,7 @@ var Utils = require("./middleware/Utils");
 app.use(express.static(__dirname + '/public'));
 
 router.use(bodyParser.json());
-router.use(Utils.fiber);
+router.use(Utils.fiberRoutes);
 
 require("./db/db").once('open', function callback() {
 	/*=== insert routes here ===*/
