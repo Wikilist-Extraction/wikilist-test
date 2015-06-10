@@ -6,7 +6,8 @@ var ManualEvaluationModel = function() {
 
 	var ManualEvaluationSchema = mongoose.Schema({
 		listId : { type: String, index: { unique: true }},
-		types : [String]
+		approvedTypes : [String],
+		declinedTypes : [String]
 	});
 
 	return mongoose.model('ManualEvaluation', ManualEvaluationSchema);

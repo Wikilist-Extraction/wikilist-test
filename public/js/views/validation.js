@@ -18,6 +18,7 @@ const Validation = React.createClass({
     return {
       types: [],
       approvedTypes: [],
+      declinedTypes: [],
       hasFetched: false,
       hasError: false,
       errorText: ''
@@ -48,7 +49,7 @@ const Validation = React.createClass({
     this.setState(newState);
   },
 
-  onDeclineType(typeUri) {
+  onUnApproveType(typeUri) {
     const index = this.state.approvedTypes.indexOf(typeUri);
     const newState = React.addons.update(this.state, {
       approvedTypes : {
@@ -59,12 +60,34 @@ const Validation = React.createClass({
     this.setState(newState);
   },
 
+  onDeclineType(typeUri) {
+    const newState = React.addons.update(this.state, {
+      declinedTypes : {
+        $push : [typeUri]
+      }
+    });
+
+    this.setState(newState);
+  },
+
+  onUnDeclineType(typeUri) {
+    const index = this.state.declinedTypes.indexOf(typeUri);
+    const newState = React.addons.update(this.state, {
+      declinedTypes : {
+        $splice : [[index, 1]]
+      }
+    });
+
+    this.setState(newState);
+  },
+
   onSubmit() {
     const postObj = {
       listId: this.props.listName,
-      types: this.state.approvedTypes
+      approvedTypes: this.state.approvedTypes,
+      declinedTypes: this.state.declinedTypes
     };
-    console.log(postObj);
+    console.log(JSON.stringify(postObj));
 
     fetch(postUrl, {
       method: 'POST',
@@ -95,7 +118,9 @@ const Validation = React.createClass({
         return <TypeListItem
           typeObject={typeObject}
           onApprove={this.onApprovedType}
+          onUnApprove={this.onUnApproveType}
           onDecline={this.onDeclineType}
+          onUnDecline={this.onUnDeclineType}
           key={typeObject.typeUri} />;
       });
       body = (
