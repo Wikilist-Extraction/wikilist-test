@@ -3,7 +3,7 @@ var TfIdfCtrl = require("../controllers/TfIdfCtrl");
 
 var TfIdfRoutes = function(app) {
 
-	app.get("/tfidf/:id", function(req, res) { //try findById
+	app.get("/tfidf/:id", function(req, res) {
 		TfIdfCtrl.fetch(req, res);
 	});
 
