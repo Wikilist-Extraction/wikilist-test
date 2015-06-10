@@ -10,6 +10,10 @@ var ListsRoutes = function(app) {
 	app.get("/lists/status", function(req, res) {
 		ListsCtrl.fetchAllWithStatus(req, res);
 	});
+
+	app.get("/list/:id", function(req, res) {
+		ListsCtrl.fetch(req, res);
+	});
 }
 
 module.exports = ListsRoutes;

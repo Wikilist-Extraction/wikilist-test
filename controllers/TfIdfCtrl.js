@@ -1,6 +1,8 @@
 /*=== TfIdf Controller ===*/
 var _ = require("lodash");
 var tfIdf = require("tf-idf-wiki-lists").tfIdf;
+var ListCacheCtrl = require("../controllers/ListCacheCtrl");
+var Promise = require("bluebird");
 
 var NOT_FOUND_RESPONSE = {
   "status": "not_found",
@@ -33,18 +35,15 @@ function renameResults(results) {
   });
 }
 
-var cache = {};
-
 var TfIdfCtrl = {
 	fetch : function(req, res) {
 		var listId = req.params.id;
+    var listOfResources = getResourceById(listId);
 
-    if (listId in cache) {
-      res.json(cache[listId]);
+    if (ListCacheCtrl.cacheContainsList(listId)) {
+      res.json(ListCacheCtrl.getListFromCache(listId));
       return;
     }
-
-    var listOfResources = getResourceById(listId);
 
     if (listOfResources === null) {
       res.json(_.extend({}, NOT_FOUND_RESPONSE, { resource: listId }));
@@ -53,7 +52,7 @@ var TfIdfCtrl = {
     promisedTfIdf(listOfResources)
       .then(renameResults)
       .then(function(results) {
-        cache[listId] = results;
+        ListCachCtrl.addListToCache(listId, results);
         res.json(results);
       });
 	}
