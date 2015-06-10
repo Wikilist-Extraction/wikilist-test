@@ -13,6 +13,7 @@
     "url": "http://www.your.site"
   },
   "dependencies": {
+    "alt": "^0.16.10",
     "body-parser": "1.0.2",
     "express": "4.1.x",
     "jquery": "2.1.1",
@@ -21,7 +22,9 @@
     "mongoose": "3.8.x",
     "node-uuid": "1.4.1",
     "react": "^0.13.3",
+    "react-bootstrap": "^0.23.2",
     "react-router": "^0.13.3",
+    "react-router-bootstrap": "^0.15.0",
     "tf-idf-wiki-lists": "git://github.com/01track1mp3/tf-idf-wiki-lists.git"
   },
   "devDependencies": {

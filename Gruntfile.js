@@ -4,12 +4,12 @@ module.exports = function(grunt) {
     browserify: {
 	    options:{
 		    transform: [
-          require('grunt-react').browserify,
-          ["babelify", { "stage": 0 }]
+        ["babelify", {stage: 0}],
+          // require('grunt-react').browserify
          ]
 	    },
 		  client: {
-			  src: ['public/js/components/**/*.js', 'public/js/views/*.js', "public/js/core/*.js"],
+			  src: ["public/js/stores/*.js", "public/js/actions/*.js", 'public/js/components/**/*.js', 'public/js/views/*.js', "public/js/core/*.js"],
 			  dest: 'public/js/app.built.js'
 		  }
     },
@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     },
     watch: {
       frontend: {
-        files: [ "public/js/views/**/*.js", "public/js/shims/**/*.js", "public/js/components/**/.js", "public/js/core/*.js"],
+        files: [ "public/js/views/**/*.js", "public/js/shims/**/*.js", "public/js/components/**/.js", "public/js/core/*.js", "public/js/stores/*.js", "public/js/actions/*.js"],
         tasks: [ 'browserify' ]
       },
       backend: {

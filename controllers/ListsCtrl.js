@@ -14,8 +14,14 @@ function listIdFromFilename(filename) {
 	return filename.replace(".js", "");
 }
 
+function isJsFile(file) {
+	var tokens = file.split(".");
+	return tokens[tokens.length - 1] == "js";
+}
+
 function getListNames() {
-	return _.map(fs.readdirSync(__dirname + "/../lists"), listIdFromFilename);
+	var jsFiles = _.filter(fs.readdirSync(__dirname + "/../lists"), isJsFile);
+	return _.map(jsFiles, listIdFromFilename);
 }
 
 function getListNamesWithStatus() {
