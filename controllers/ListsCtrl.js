@@ -1,4 +1,5 @@
 /*=== Lists Controller ===*/
+'use strict';
 
 var fs = require("fs");
 var _ = require("lodash");
@@ -47,6 +48,13 @@ _.extend(ListsCtrl, {
 		return _.map(listNames, function(listId) {
 			return { listId: listId, validated: ListsCtrl.listExists(listId) };
 		});
+	},
+
+	getValidatedListNames: function() {
+		return _(ListsCtrl.getListNamesWithStatus())
+      .filter(function(list) { return list.validated; })
+      .pluck('listId')
+			.value();
 	},
 
 
