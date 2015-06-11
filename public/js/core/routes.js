@@ -4,12 +4,12 @@ var {DefaultRoute, Route} = Router;
 
 import Layout from './layout';
 import Home from '../views/home';
-import Validation from '../views/validation';
+import Testing from '../views/testing';
 
 var routes = (
   <Route name="app" path="/" handler={Layout}>
     <Route name="home" handler={Home}/>
-    <Route name="validation" handler={Validation}/>
+    <Route name="testing" handler={Testing}/>
     <DefaultRoute handler={Home}/>
   </Route>
 );
