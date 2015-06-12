@@ -11,11 +11,11 @@ var ManualEvaluationsCtrl = {
 	},
 
 	deleteEvaluation: function(listId) {
-		return sync(ManualEvaluation.findOneAndRemove)({listId:req.params.id});
+		return sync.await( ManualEvaluation.findOneAndRemove({listId: listId}, sync.defer()) );
 	},
 
 	getEvaluation: function(listId) {
-		return sync(ManualEvaluation.findOne)({ listId: listId });
+		return sync.await( ManualEvaluation.findOne({ listId: listId }, sync.defer()) );
 	},
 
 	getApprovedTypes: function(listId) {

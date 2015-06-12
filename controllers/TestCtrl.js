@@ -5,6 +5,7 @@ var ListsCtrl = require('./ListsCtrl');
 var ManualEvaluationsCtrl = require('./ManualEvaluationsCtrl');
 var TestModelCtrl = require('./TestModelCtrl');
 var TestSuite = require('../tests/TestSuite');
+var TestRepository = require('../tests/TestRepository');
 
 var testsRunning = false;
 
@@ -95,6 +96,10 @@ var TestCtrl = {
 
     var tests = TestModelCtrl.fetchTest(testId);
     res.json(TestCtrl.buildResults(tests));
+  },
+
+  getTestIds: function(req, res) {
+    res.json(TestRepository.getAllTestIds());
   }
 
 };
