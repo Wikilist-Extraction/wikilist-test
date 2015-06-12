@@ -1,6 +1,8 @@
 /*=== ManualEvaluation Controller ===*/
-var sync = require("synchronize");
-var ManualEvaluation = require("../models/ManualEvaluation")();
+'use strict';
+
+var sync = require('synchronize');
+var ManualEvaluation = require('../models/ManualEvaluation');
 
 var ManualEvaluationsCtrl = {
 	exists : function(listId) {
@@ -8,11 +10,35 @@ var ManualEvaluationsCtrl = {
 		return lists.length > 0;
 	},
 
+	deleteEvaluation: function(listId) {
+		return sync(ManualEvaluation.findOneAndRemove)({listId:req.params.id});
+	},
+
+	getEvaluation: function(listId) {
+		return sync(ManualEvaluation.findOne)({ listId: listId });
+	},
+
+	getApprovedTypes: function(listId) {
+		return ManualEvaluationsCtrl.getEvaluation(listId).approvedTypes;
+	},
+
+	getDeclinedTypes: function(listId) {
+		return ManualEvaluationsCtrl.getEvaluation(listId).declinedTypes;
+	},
+
 
 	create : function(req, res) {
+		if (ManualEvaluationsCtrl.exists(req.body.listId)) {
+			ManualEvaluationsCtrl.delete(req.body.listId);
+		}
+
 		var manualevaluation = new ManualEvaluation(req.body);
 		manualevaluation.save(function (err, manualevaluation) {
-			console.log("Saved data for: ", manualevaluation.listId);
+			if (err) {
+				throw err;
+			}
+
+			console.log('Saved data for: ', manualevaluation.listId);
 			res.send(manualevaluation);
 		});
 	},
@@ -32,7 +58,7 @@ var ManualEvaluationsCtrl = {
 	update : function (req, res) {
 		delete req.body._id;
 		ManualEvaluation.update({listId:req.params.id}, req.body, function (err, manualevaluation) {
-			console.log("Update data for:", manualevaluation.listId);
+			console.log('Update data for:', manualevaluation.listId);
 			res.send(manualevaluation);
 		});
 	},

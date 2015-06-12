@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         tasks: [ 'browserify' ]
       },
       backend: {
-        files: [ "middleware/**/*.js", "routes/**/*.js", "models/**/*.js", "controllers/**/*.js", "app.js", "all.routes.js" ],
+        files: [ "tests/**/*js", "middleware/**/*.js", "routes/**/*.js", "models/**/*.js", "controllers/**/*.js", "app.js", "all.routes.js" ],
         tasks: [ "express:dev" ],
         options: {
          spawn: false

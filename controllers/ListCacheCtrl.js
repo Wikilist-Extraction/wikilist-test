@@ -1,8 +1,9 @@
 /*=== ListCache Controller ===*/
+"use strict";
 
 var sync = require("synchronize");
 var _ = require("lodash");
-var ListCache = require("../models/ListCache")();
+var ListCache = require("../models/ListCache");
 var ListsCtrl = require("./ListsCtrl");
 var TfIdfCtrl = require("./TfIdfCtrl");
 

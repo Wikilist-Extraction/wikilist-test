@@ -1,8 +1,9 @@
 /*=== ListCache Model ===*/
+'use strict';
 
 var mongoose = require('mongoose');
 
-var ListCacheModel = function() {
+var ListCacheModel = (function() {
 
 	var ListCacheSchema = mongoose.Schema({
 		listId : { type: String, index: { unique: true }},
@@ -10,6 +11,6 @@ var ListCacheModel = function() {
 	});
 
 	return mongoose.model('ListCache', ListCacheSchema);
-}
+})();
 
 module.exports = ListCacheModel;
