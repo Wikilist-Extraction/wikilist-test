@@ -8,6 +8,10 @@ var TfIdfRoutes = function(app) {
 		TestCtrl.runAllTests(req, res);
 	});
 
+	app.get('/tests', function(req, res) {
+		TestCtrl.getTestIds(req, res);
+	});
+
 	app.get('/test/result/:id', function(req, res) {
 		TestCtrl.getResults(req, res);
 	});
