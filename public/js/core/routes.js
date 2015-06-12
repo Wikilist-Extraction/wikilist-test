@@ -4,12 +4,12 @@ var {DefaultRoute, Route} = Router;
 
 import Layout from './layout';
 import Home from '../views/home';
-import Testing from '../views/testing';
+import TestOverview from '../views/testOverview';
 
 var routes = (
   <Route name="app" path="/" handler={Layout}>
     <Route name="home" handler={Home}/>
-    <Route name="testing" handler={Testing}/>
+    <Route name="testing" handler={TestOverview}/>
     <DefaultRoute handler={Home}/>
   </Route>
 );

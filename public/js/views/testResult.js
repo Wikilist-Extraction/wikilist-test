@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import {Button, Table, Glyphicon, Panel, Badge, ListGroup, ListGroupItem, Col, Row} from 'react-bootstrap';
 
-const testStartUrl = '/api/test';
+const testResultUrl = '/api/test/result/';
 const wikiPrefix = 'http://en.wikipedia.org/wiki/';
 
 const mock = [
@@ -36,13 +36,24 @@ const mock = [
 ];
 
 
-const Testing = React.createClass({
+const TestResult = React.createClass({
 
   getInitialState() {
     return {
       showResult: false,
-      showResultId: ''
+      showResultId: '',
+      fetchedResults: false,
+      testResults: []
     }
+  },
+
+  componentDidMount() {
+    fetch(testResultUrl + this.props.testId)
+      .then(reponse => response.json())
+      .then(json => this.setState({
+        testResults: json
+      }))
+      .catch(error => console.log(error));
   },
 
   getMatches(arr1, arr2) {
@@ -95,7 +106,7 @@ const Testing = React.createClass({
   },
 
   render() {
-    const testResults = mock;
+    const testResults = this.state.testResults;
 
     let body;
     if (!this.state.showResult) {
@@ -164,4 +175,4 @@ const Testing = React.createClass({
   }
 });
 
-module.exports = Testing;
+module.exports = TestResult;
