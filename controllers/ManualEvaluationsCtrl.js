@@ -29,7 +29,7 @@ var ManualEvaluationsCtrl = {
 
 	create : function(req, res) {
 		if (ManualEvaluationsCtrl.exists(req.body.listId)) {
-			ManualEvaluationsCtrl.delete(req.body.listId);
+			ManualEvaluationsCtrl.deleteEvaluation(req.body.listId);
 		}
 
 		var manualevaluation = new ManualEvaluation(req.body);
