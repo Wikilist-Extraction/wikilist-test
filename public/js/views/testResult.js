@@ -49,7 +49,7 @@ const TestResult = React.createClass({
 
   componentDidMount() {
     fetch(testResultUrl + this.props.testId)
-      .then(reponse => response.json())
+      .then(response => response.json())
       .then(json => this.setState({
         testResults: json
       }))
@@ -108,21 +108,35 @@ const TestResult = React.createClass({
   render() {
     const testResults = this.state.testResults;
 
+    if ('status' in testResults) {
+      return (
+        <div>
+          <Button onClick={this.props.onGoBack}>Back</Button>
+          <Panel header={testResults.status}>
+            {testResults.message}
+          </Panel>
+        </div>
+      );
+    }
+
     let body;
     if (!this.state.showResult) {
       const testResultRows = testResults.map(testResult => this.getTestResultRow(testResult));
       body = (
-        <Table hover>
-          <thead>
-            <th>List</th>
-            <th>Match</th>
-            <th>Mismatch</th>
-            <th></th>
-          </thead>
-          <tbody>
-            {testResultRows}
-          </tbody>
-        </Table>
+        <div>
+          <Button onClick={this.props.onGoBack}>Back</Button>
+          <Table hover>
+            <thead>
+              <th>List</th>
+              <th>Match</th>
+              <th>Mismatch</th>
+              <th></th>
+            </thead>
+            <tbody>
+              {testResultRows}
+            </tbody>
+          </Table>
+        </div>
       );
     } else {
       const id = this.state.showResultId;

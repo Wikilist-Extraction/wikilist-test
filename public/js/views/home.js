@@ -1,5 +1,5 @@
 import React from 'react';
-import {Glyphicon, ButtonGroup, Button} from 'react-bootstrap';
+import {Glyphicon, ButtonGroup, Button, DropdownButton, MenuItem} from 'react-bootstrap';
 import Validation from './validation';
 
 
@@ -40,6 +40,10 @@ const Home = React.createClass({
     return this.state.currentListNumber == this.state.lists.length - 1;
   },
 
+  selectList(index) {
+    this.setState({currentListNumber: index});
+  },
+
 
   render() {
     // const listElems = this.state.lists.map((listString) => {
@@ -54,11 +58,19 @@ const Home = React.createClass({
       element = <p>Validation finished</p>
     } else if (this.state.hasFetched) {
       const listName = lists[currentListNumber];
+
+      const dropdownItems = lists.map((elem, index) => {
+        return <MenuItem onSelect={() => this.selectList(index)} eventKey={index}>{elem}</MenuItem>
+      })
+
       element = (
         <div>
           <ButtonGroup>
             <Button onClick={this.onPrevious} disabled={this.isFirst()}><Glyphicon glyph='arrow-left' /></Button>
             <Button onClick={this.onNext} disabled={this.isLast()}><Glyphicon glyph='arrow-right' /></Button>
+            <DropdownButton bsStyle='default' title='choose list' key={this.state.currentListNumber}>
+              {dropdownItems}
+            </DropdownButton>
           </ButtonGroup>
           <Validation listName={listName} onNext={this.onNext} key={listName}/>
         </div>
