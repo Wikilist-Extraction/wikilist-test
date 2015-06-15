@@ -75,7 +75,7 @@ var TestCtrl = {
       testsRunning = false;
     } catch(error) {
       testsRunning = false;
-      res.json(TestCtrl.TESTSUITE_ERROR(testId, error.stack));
+      // res.json(TestCtrl.TESTSUITE_ERROR(testId, error.stack));
 
       console.error(error.stack);
     }

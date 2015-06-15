@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require("lodash");
 var TfIdfCtrl = require("./TfIdfCtrl");
 var ListsCtrl = require("./ListsCtrl");
@@ -40,11 +42,12 @@ _.extend(CacheCtrl, {
 		console.log("... done!");
 	},
 
-
 	warmup : function(req, res) {
     if (CacheCtrl.isCaching) {
-      return res.json(CacheCtrl.inProgressRespone());
+      res.json(CacheCtrl.inProgressRespone());
+      return;
     }
+
 		res.json(CacheCtrl.START_WARMUP_RESPONSE);
     CacheCtrl.isCaching = true;
 		CacheCtrl.cacheAllLists();

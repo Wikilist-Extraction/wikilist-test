@@ -5,6 +5,8 @@ var fs = require("fs");
 var _ = require("lodash");
 var ManualEvaluationCtrl = require("./ManualEvaluationsCtrl");
 
+var URL_PREFIX = "http://dbpedia.org/resource/";
+
 var ListsCtrl = {};
 
 _.extend(ListsCtrl, {
@@ -23,6 +25,10 @@ _.extend(ListsCtrl, {
 
 	    throw e;
 	  }
+	},
+
+	buildUrlById: function(listId) {
+		return URL_PREFIX+listId;
 	},
 
 	listExists: function (listId) {

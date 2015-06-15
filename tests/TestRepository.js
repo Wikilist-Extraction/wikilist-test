@@ -1,7 +1,9 @@
 'use strict';
 
 var TestMap = {
-  'tfidf': require('./testcases/tfIdfTest')
+  'tfidf': require('./testcases/tfIdfTest'),
+  'textEvidence': require('./testcases/textEvidenceTest'),
+  'crossedResults': require('./testcases/fullRankingTest')
 };
 
 var TestRepository = {

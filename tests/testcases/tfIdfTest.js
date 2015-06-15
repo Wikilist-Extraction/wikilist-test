@@ -12,7 +12,7 @@ function Test() {
 Test.prototype = _.extend({}, TestCase.prototype, {
   syncTfIdf: function (listOfResources) {
     function errorWrappedTfIdf(listOfResources, callback) {
-      tfIdf(listOfResources, function(results, counts) { callback(null, results, counts); })
+      tfIdf(listOfResources, function(results, counts) { callback(null, results, counts); });
     }
 
     return sync.await(errorWrappedTfIdf(listOfResources, sync.defer()));

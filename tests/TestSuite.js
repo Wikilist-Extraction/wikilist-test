@@ -19,7 +19,8 @@ function TestSuite(testId) {
 TestSuite.prototype = {
   test: function(listId) {
     var resources = ListsCtrl.getResourceById(listId);
-    var testCase = new this.TestCase(resources);
+    var parentResource = ListsCtrl.buildUrlById(listId);
+    var testCase = new this.TestCase(resources, parentResource);
     return testCase.run();
   },
 
