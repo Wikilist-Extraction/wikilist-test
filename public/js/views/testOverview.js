@@ -46,10 +46,10 @@ var TestOverview = React.createClass({
     }
 
     const rows = this.state.tests.map(testName => {
+      // <td><Button onClick={() => this.startTest(testName)}>Start</Button></td>
       return (
         <tr key={testName}>
           <td>{testName}</td>
-          <td><Button onClick={() => this.startTest(testName)}>Start</Button></td>
           <td><Button onClick={() => this.showResultFor(testName)}>Results</Button></td>
         </tr>
       );
