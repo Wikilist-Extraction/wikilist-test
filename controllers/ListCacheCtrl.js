@@ -5,7 +5,6 @@ var sync = require("synchronize");
 var _ = require("lodash");
 var ListCache = require("../models/ListCache");
 var ListsCtrl = require("./ListsCtrl");
-var TfIdfCtrl = require("./TfIdfCtrl");
 
 var ListCacheCtrl = {};
 
@@ -16,8 +15,16 @@ _.extend(ListCacheCtrl, {
 	},
 
 	getListFromCache : function(listId) {
+		return ListCacheCtrl.fetch(listId).cache;
+	},
+
+	fetch : function(listId) {
 		var lists = sync.await( ListCache.find({ listId: listId }, sync.defer()) );
-		return lists[0].cache;
+		return lists[0];
+	},
+
+	fetchAll: function() {
+		return sync.await( ListCache.find({}, sync.defer()) );
 	},
 
 	addListToCache : function(listId, results) {

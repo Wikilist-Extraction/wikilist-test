@@ -5,6 +5,7 @@ var fs = require("fs");
 var sync = require("synchronize");
 var _ = require("lodash");
 var ListModel = require("../models/ListModel");
+var ListCacheCtrl = require('./ListCacheCtrl');
 var ManualEvaluationCtrl = require("./ManualEvaluationsCtrl");
 
 var URL_PREFIX = "http://dbpedia.org/resource/";
@@ -46,7 +47,7 @@ _.extend(ListsCtrl, {
 	},
 
 	getResourceById: function(listId) {
-		return ListsCtrl.existsInModel(listId) ? ListsCtrl.fetchFromModel(listId).entities : ListsCtrl.getJsResourceById(listId);
+		return ListCacheCtrl.cacheContainsList(listId) ? ListCacheCtrl.fetch(listId).entities : ListsCtrl.getJsResourceById(listId);
 	},
 
 	buildUrlById: function(listId) {
@@ -72,7 +73,7 @@ _.extend(ListsCtrl, {
 			.filter(ListsCtrl.isJsFile)
 		 	.map(ListsCtrl.listIdFromFilename)
 			.value();
-		var modelListNames = _.pluck(ListsCtrl.fetchAllFromModel(), "listId");
+		var modelListNames = _.pluck(ListCacheCtrl.fetchAll(), "listId");
 
 		return _.union(jsListNames, modelListNames);
 	},
@@ -100,6 +101,7 @@ _.extend(ListsCtrl, {
 		return sync.await(listModel.save( sync.defer() ));
 	},
 
+	/** DEPRECATED **/
 	create: function(req, res) {
 		var listId = req.params.id;
 		var pushedEntites = req.body.entities;
@@ -129,19 +131,20 @@ _.extend(ListsCtrl, {
 		res.json(ListsCtrl.SUCCESSFULLY_SAVED);
 	},
 
-	fetchFromModel: function(listId) {
-		var lists = sync.await( ListModel.find({ listId: listId }, sync.defer() ));
-		return lists[0];
-	},
-
-	fetchAllFromModel: function() {
-		return sync.await( ListModel.find({}, sync.defer() ));
-	},
-
-	existsInModel: function(listId) {
-		var lists = sync.await( ListModel.find({ listId: listId }, sync.defer() ));
-		return lists.length > 0;
-	},
+	/** DEPRECATED **/
+	// fetchFromModel: function(listId) {
+	// 	var lists = sync.await( ListModel.find({ listId: listId }, sync.defer() ));
+	// 	return lists[0];
+	// },
+	//
+	// fetchAllFromModel: function() {
+	// 	return sync.await( ListModel.find({}, sync.defer() ));
+	// },
+	//
+	// existsInModel: function(listId) {
+	// 	var lists = sync.await( ListModel.find({ listId: listId }, sync.defer() ));
+	// 	return lists.length > 0;
+	// },
 
 	fetch: function (req, res) {
 		var listId = req.params.id;

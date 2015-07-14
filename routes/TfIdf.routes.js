@@ -8,9 +8,14 @@ var TfIdfRoutes = function(app) {
 		TfIdfCtrl.fetch(req, res);
 	});
 
-	app.get("/cache/warmup", function(req, res) {
-		CacheCtrl.warmup(req, res);
-	});
+	app.post("/tfidfs", function(req, res) {
+		TfIdfCtrl.createAll(req, res);
+	})
+
+	/** DEPRECATED **/
+	// app.get("/cache/warmup", function(req, res) {
+	// 	CacheCtrl.warmup(req, res);
+	// });
 
 }
 

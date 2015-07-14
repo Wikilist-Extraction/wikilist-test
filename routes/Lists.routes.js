@@ -15,9 +15,11 @@ var ListsRoutes = function(app) {
 		ListsCtrl.fetch(req, res);
 	});
 
-	app.post("/list/:id", function(req, res) {
-		ListsCtrl.create(req, res);
-	});
+	/** DEPRECATED **/
+	// app.post("/list/:id", function(req, res) {
+		// ListsCtrl.create(req, res);
+	// });
+
 }
 
 module.exports = ListsRoutes;
