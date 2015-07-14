@@ -27,6 +27,15 @@ var TestModelCtrl = {
 		return sync.await( testModel.save(sync.defer()) );
 	},
 
+	createTestResultSet : function(testId, resultLists) {
+		var testModel = new TestModel({
+			testId: testId,
+			lists: resultLists
+		});
+
+		return sync.await( testModel.save(sync.defer()) );
+	},
+
 	fetchTest : function(testId) {
 		return sync.await( TestModel.findOne({ testId: testId }, sync.defer()) );
 	},
