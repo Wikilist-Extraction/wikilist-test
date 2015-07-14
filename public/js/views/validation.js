@@ -123,10 +123,10 @@ const Validation = React.createClass({
           onUnDecline={this.onUnDeclineType}
           key={typeObject.typeUri} />;
       });
+      // <th>Label</th>
       body = (
         <Table>
           <thead>
-            <th>Label</th>
             <th>Uri</th>
             <th>count</th>
             <th>tfIdf</th>

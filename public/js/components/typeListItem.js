@@ -55,9 +55,9 @@ const TypeListItem = React.createClass({
     const approveButtonStyle = this.state.isApproved ? 'success' : 'default';
     const declineButtonStyle = this.state.isDeclined ? 'danger' : 'default';
 
+    // <td>{typeObj.label}</td>
     return (
       <tr>
-        <td>{typeObj.label}</td>
         <td>{typeObj.typeUri}</td>
         <td>{typeObj.count}</td>
         <td>{typeObj.tfIdf}</td>
