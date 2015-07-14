@@ -42,18 +42,29 @@ var TestCtrl = {
 
   buildResults: function(tests) {
     return _(tests.lists)
-      .map(function(result, listId) {
-        return {
-          listId: listId,
-          approvedTypes: ManualEvaluationsCtrl.getApprovedTypes(listId),
-          declinedTypes: ManualEvaluationsCtrl.getDeclinedTypes(listId),
-          result: result
-        };
+      .pick(function(versions, listId) {
+        return ManualEvaluationsCtrl.getEvaluation(listId) !== null
+      })
+      .map(function(versions, listId) {
+        var approvedTypes = ManualEvaluationsCtrl.getApprovedTypes(listId);
+        var declinedTypes = ManualEvaluationsCtrl.getDeclinedTypes(listId);
+
+        return _(versions)
+          .map(function(result, version) {
+            return {
+              listId: listId,
+              version: version,
+              approvedTypes: approvedTypes,
+              declinedTypes: declinedTypes,
+              result: result
+            };
+          })
+          .value()
       })
       .value();
   },
 
-
+  /** DEPRECATED **/
   runAllTests: function(req, res) {
     try {
       var testId = req.params.id;
@@ -95,11 +106,35 @@ var TestCtrl = {
     }
 
     var tests = TestModelCtrl.fetchTest(testId);
-    res.json(TestCtrl.buildResults(tests));
+    var allResults = TestCtrl.buildResults(tests);
+    var firstResults = _.map(allResults, function(versions) {
+      return versions[0];
+    });
+    res.json(firstResults);
+  },
+
+  getAllResults: function(req, res) {
+    var testId = req.params.id;
+
+    if (testsRunning) {
+      res.json(TestCtrl.TESTSUITE_RUNNING_RESPONSE(testId));
+      return;
+    }
+
+    if (!TestModelCtrl.existsTest(testId)) {
+      res.json(TestCtrl.TESTSUITE_NOT_FOUND_RESPONSE(testId));
+      return;
+    }
+
+    var tests = TestModelCtrl.fetchTest(testId);
+    var allResults = TestCtrl.buildResults(tests);
+    res.json(allResults);
   },
 
   getTestIds: function(req, res) {
-    res.json(TestRepository.getAllTestIds());
+    // test cases are deprecated!
+    // res.json(TestRepository.getAllTestIds());
+    res.json(TestModelCtrl.fetchTestIds());
   }
 
 };

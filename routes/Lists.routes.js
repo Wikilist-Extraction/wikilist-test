@@ -14,6 +14,10 @@ var ListsRoutes = function(app) {
 	app.get("/list/:id", function(req, res) {
 		ListsCtrl.fetch(req, res);
 	});
+
+	app.post("/list/:id", function(req, res) {
+		ListsCtrl.create(req, res);
+	});
 }
 
 module.exports = ListsRoutes;

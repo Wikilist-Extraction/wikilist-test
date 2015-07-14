@@ -2,7 +2,9 @@
 'use strict';
 
 var fs = require("fs");
+var sync = require("synchronize");
 var _ = require("lodash");
+var ListModel = require("../models/ListModel");
 var ManualEvaluationCtrl = require("./ManualEvaluationsCtrl");
 
 var URL_PREFIX = "http://dbpedia.org/resource/";
@@ -15,7 +17,23 @@ _.extend(ListsCtrl, {
 	  "message": "Resource was not found"
 	},
 
-	getResourceById: function(listId) {
+	SUCCESSFULLY_SAVED: {
+		'status': 'ok',
+		'message': 'Your list was stored.'
+	},
+
+	NO_LIST_ID: {
+		'status': 'error',
+		'message': 'Provide a list id as part of the url.'
+	},
+
+	NO_ENTITIES: {
+		'status': 'error',
+		'message': 'Provide an array of dbpedia resource links as `entities` key in the body.'
+	},
+
+
+	getJsResourceById: function(listId) {
 	  try {
 	    return require("../lists/"+listId+".js");
 	  } catch(e) {
@@ -27,11 +45,15 @@ _.extend(ListsCtrl, {
 	  }
 	},
 
+	getResourceById: function(listId) {
+		return ListsCtrl.existsInModel(listId) ? ListsCtrl.fetchFromModel(listId).entities : ListsCtrl.getJsResourceById(listId);
+	},
+
 	buildUrlById: function(listId) {
 		return URL_PREFIX+listId;
 	},
 
-	listExists: function (listId) {
+	existsEvaluatedList: function (listId) {
 		return ManualEvaluationCtrl.exists(listId);
 	},
 
@@ -45,14 +67,20 @@ _.extend(ListsCtrl, {
 	},
 
 	getListNames: function () {
-		var jsFiles = _.filter(fs.readdirSync(__dirname + "/../lists"), ListsCtrl.isJsFile);
-		return _.map(jsFiles, ListsCtrl.listIdFromFilename);
+		var jsFilenames = fs.readdirSync(__dirname + "/../lists");
+		var jsListNames = _(jsFilenames)
+			.filter(ListsCtrl.isJsFile)
+		 	.map(ListsCtrl.listIdFromFilename)
+			.value();
+		var modelListNames = _.pluck(ListsCtrl.fetchAllFromModel(), "listId");
+
+		return _.union(jsListNames, modelListNames);
 	},
 
 	getListNamesWithStatus: function () {
 		var listNames = ListsCtrl.getListNames();
 		return _.map(listNames, function(listId) {
-			return { listId: listId, validated: ListsCtrl.listExists(listId) };
+			return { listId: listId, validated: ListsCtrl.existsEvaluatedList(listId) };
 		});
 	},
 
@@ -63,9 +91,61 @@ _.extend(ListsCtrl, {
 			.value();
 	},
 
+	createEmptyList: function(listId) {
+		var listModel = new ListModel({
+			listId: listId,
+			entities: []
+		});
+
+		return sync.await(listModel.save( sync.defer() ));
+	},
+
+	create: function(req, res) {
+		var listId = req.params.id;
+		var pushedEntites = req.body.entities;
+
+		if (!listId) {
+			res.json(ListsCtrl.NO_LIST_ID);
+			return;
+		}
+
+		if (!pushedEntites || !_.isArray(pushedEntites)) {
+			res.json(ListsCtrl.NO_ENTITIES);
+			return;
+		}
+
+		// create new list or fetch existing one
+		var listModel;
+		if (ListsCtrl.existsInModel(listId)) {
+			listModel = ListsCtrl.fetchFromModel(listId);
+		} else {
+			listModel = ListsCtrl.createEmptyList(listId);
+		}
+
+		// override list entries of model
+		listModel.entities = pushedEntites;
+
+		sync.await( listModel.save( sync.defer() ));
+		res.json(ListsCtrl.SUCCESSFULLY_SAVED);
+	},
+
+	fetchFromModel: function(listId) {
+		var lists = sync.await( ListModel.find({ listId: listId }, sync.defer() ));
+		return lists[0];
+	},
+
+	fetchAllFromModel: function() {
+		return sync.await( ListModel.find({}, sync.defer() ));
+	},
+
+	existsInModel: function(listId) {
+		var lists = sync.await( ListModel.find({ listId: listId }, sync.defer() ));
+		return lists.length > 0;
+	},
 
 	fetch: function (req, res) {
-		var resource = ListsCtrl.getResourceById(req.params.id);
+		var listId = req.params.id;
+		var resource = ListsCtrl.getResourceById(listId);
 
 		if (resource === null) {
       res.json(_.extend({}, ListsCtrl.NOT_FOUND_RESPONSE, { resource: listId }));

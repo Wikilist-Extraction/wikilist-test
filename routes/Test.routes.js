@@ -18,12 +18,13 @@ var TfIdfRoutes = function(app) {
 	});
 
 	app.post('/test/result/:id', function(req, res) {
-		var testName = req.params.id;
-		var testResults = req.body.lists;
-		console.log(testResults)
-		TestModelCtrl.createTestResultSet(testName, testResults);
-		res.json({message: "success"});
+		TestModelCtrl.createTestResultSet(req, res);
 	});
+
+	app.get('/test/results/:id', function(req, res) {
+		TestCtrl.getAllResults(req, res);
+	});
+
 };
 
 module.exports = TfIdfRoutes;
