@@ -12,6 +12,9 @@
     "twitter": "@your_twitter_pseudo",
     "url": "http://www.your.site"
   },
+  "scripts": {
+    "install": "bower install"
+  },
   "dependencies": {
     "alt": "^0.16.10",
     "bluebird": "^2.9.27",
