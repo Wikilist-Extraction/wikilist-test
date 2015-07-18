@@ -14,6 +14,7 @@ class App extends React.Component {
           <Nav>
             <NavItemLink to="home" eventKey={1}>Validation</NavItemLink>
             <NavItemLink to="testing" eventKey={2}>Testing</NavItemLink>
+            <NavItemLink to="upload" eventKey={2}>Upload</NavItemLink>
           </Nav>
         </Navbar>
         <div className='container'>
