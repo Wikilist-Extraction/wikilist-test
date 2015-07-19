@@ -39,19 +39,27 @@ var ManualEvaluationsCtrl = {
 			}
 
 			console.log('Saved data for: ', manualevaluation.listId);
-			res.send(manualevaluation);
+			res.json(manualevaluation);
 		});
 	},
 
 	fetchAll : function (req, res) {
 		ManualEvaluation.find(function (err, manualevaluations) {
-			res.send(manualevaluations);
+			res.json(manualevaluations);
 		});
 	},
 
 	fetch : function (req, res) {
 		ManualEvaluation.find({listId:req.params.id}, function (err, manualevaluations) {
-			res.send(manualevaluations[0]);
+			if (err || manualevaluations.length == 0) {
+				res.json({
+					listId: req.params.id,
+					approvedTypes: [],
+					declinedTypes: []
+				});
+				return
+			}
+			res.json(manualevaluations[0]);
 		});
 	},
 
@@ -59,13 +67,13 @@ var ManualEvaluationsCtrl = {
 		delete req.body._id;
 		ManualEvaluation.update({listId:req.params.id}, req.body, function (err, manualevaluation) {
 			console.log('Update data for:', manualevaluation.listId);
-			res.send(manualevaluation);
+			res.json(manualevaluation);
 		});
 	},
 
 	delete : function (req, res) {
 		ManualEvaluation.findOneAndRemove({listId:req.params.id}, function (err, manualevaluation) {
-			res.send(manualevaluation);
+			res.json(manualevaluation);
 		});
 	}
 }

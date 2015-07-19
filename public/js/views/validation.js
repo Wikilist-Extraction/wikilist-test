@@ -19,24 +19,42 @@ const Validation = React.createClass({
       types: [],
       approvedTypes: [],
       declinedTypes: [],
-      hasFetched: false,
+      hasFetchedList: false,
+      hasFetchedEvaluation: false,
       hasError: false,
       errorText: ''
     };
   },
 
   componentDidMount() {
-    const url = listUrl + this.props.listName;
-    fetch(url)
+    const tfIdfUrl = listUrl + this.props.listName;
+    fetch(tfIdfUrl)
       .then(response => response.json())
-      .then(json => this.setState({types: json, hasFetched: true}))
+      .then(json => this.setState({types: json, hasFetchedList: true}))
       .catch(error => {
         this.setState({
-          hasFetched: true,
+          hasFetchedList: true,
           hasError: true,
-          errorText: error
+          errorText: error.message
         });
       });
+
+      const evaluationUrl = postUrl + "/" + this.props.listName
+      console.log(evaluationUrl)
+      fetch(evaluationUrl)
+        .then(response => response.json())
+        .then(json => this.setState({
+          approvedTypes: json.approvedTypes,
+          declinedTypes: json.declinedTypes,
+          hasFetchedEvaluation: true,
+        }))
+        .catch(error => {
+          this.setState({
+            hasFetchedEvaluation: true,
+            hasError: true,
+            errorText: error.message
+          })
+        })
   },
 
   onApprovedType(typeUri) {
@@ -111,16 +129,21 @@ const Validation = React.createClass({
     let buttonDisabled = true;
     if (state.hasError) {
       body = <p>An error occured: {state.errorText}</p>
-    } else if (state.hasFetched) {
+    } else if (state.hasFetchedList && state.hasFetchedEvaluation) {
 
       const sortedTypeObjects = _.sortByOrder(state.types, 'tfIdf', false);
       const typeRows = sortedTypeObjects.map(typeObject => {
+        const isApproved = _.findIndex(state.approvedTypes, (uri) => uri === typeObject.typeUri) >= 0;
+        const isDeclined = _.findIndex(state.declinedTypes, (uri) => uri === typeObject.typeUri) >= 0;
+
         return <TypeListItem
           typeObject={typeObject}
           onApprove={this.onApprovedType}
           onUnApprove={this.onUnApproveType}
           onDecline={this.onDeclineType}
           onUnDecline={this.onUnDeclineType}
+          isDeclined={isDeclined}
+          isApproved={isApproved}
           key={typeObject.typeUri} />;
       });
       // <th>Label</th>
