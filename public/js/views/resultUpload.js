@@ -7,12 +7,16 @@ const listsUrl = '/api/lists';
 
 const ResultUpload = React.createClass({
 
+  handleSubmit() {
+    
+  },
+
   render() {
     return (
       <form>
-        <Input type='text' label='Test name' placeholder='Enter test name' />
+        <Input type='text' label='Algorithm name' placeholder='Enter algorithm name' />
         <Input type='file' label='Result file' help='TBD' />
-        <ButtonInput type='submit' value='Submit' />
+        <ButtonInput type='submit' value='Submit' onClick={this.handleSubmit}/>
       </form>
     );
   }

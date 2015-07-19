@@ -1,5 +1,5 @@
 import React from 'react';
-import {Glyphicon, ButtonGroup, Button, DropdownButton, MenuItem} from 'react-bootstrap';
+import {Glyphicon, ButtonGroup, Button, DropdownButton, MenuItem, Input} from 'react-bootstrap';
 import Validation from './validation';
 
 
@@ -60,8 +60,13 @@ const Home = React.createClass({
       const listName = lists[currentListNumber];
 
       const dropdownItems = lists.map((elem, index) => {
-        return <MenuItem onSelect={() => this.selectList(index)} eventKey={index}>{elem}</MenuItem>
+        return <MenuItem onSelect={() => this.selectList(index)} eventKey={index}>{`${index} ${elem}`}</MenuItem>
       })
+
+      const currentListNumberValueLink = {
+        value: currentListNumber,
+        requestChange: this.selectList
+      }
 
       element = (
         <div>
@@ -71,6 +76,7 @@ const Home = React.createClass({
             <DropdownButton bsStyle='default' title='choose list' key={this.state.currentListNumber}>
               {dropdownItems}
             </DropdownButton>
+            <Input type="number" valueLink={currentListNumberValueLink}/>
           </ButtonGroup>
           <Validation listName={listName} onNext={this.onNext} key={listName}/>
         </div>
