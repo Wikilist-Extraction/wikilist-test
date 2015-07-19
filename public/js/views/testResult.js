@@ -121,15 +121,25 @@ const TestResult = React.createClass({
 
     let body;
     if (!this.state.showResult) {
-      const testResultRows = testResults.map(testResult => this.getTestResultRow(testResult));
+      const filteredTestResults = testResults.filter(testResult => testResult.declinedTypes.length > 0 || testResult.approvedTypes.length > 0)
+      const testResultRows = filteredTestResults.map(testResult => this.getTestResultRow(testResult));
+
+      const matchSum = filteredTestResults.reduce(((acc, testResult) => testResult.approvedTypes.length + acc), 0)
+      const actualMatches = filteredTestResults.reduce(((acc, testResult) => this.getMatches(testResult.approvedTypes, testResult.result) + acc), 0)
+      const matchPercent =  matchSum > 0 ? actualMatches / matchSum : 0
+
+      const mismatchSum = filteredTestResults.reduce(((acc, testResult) => testResult.declinedTypes.length + acc), 0)
+      const actualMismatches = filteredTestResults.reduce(((acc, testResult) => this.getMatches(testResult.declinedTypes, testResult.result) + acc), 0)
+      const mismatchPercent =  mismatchSum > 0 ? 1 - (actualMismatches / mismatchSum) : 0
+
       body = (
         <div>
           <Button onClick={this.props.onGoBack}>Back</Button>
           <Table hover>
             <thead>
               <th>List</th>
-              <th>Match</th>
-              <th>Mismatch</th>
+              <th>Match ({matchPercent*100}%)</th>
+              <th>Mismatch ({mismatchPercent*100}%)</th>
               <th></th>
             </thead>
             <tbody>
