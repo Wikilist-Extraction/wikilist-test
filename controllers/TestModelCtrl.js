@@ -75,7 +75,9 @@ var TestModelCtrl = {
 
 	createTestResultSet : function(req, res) {
 		var testId = req.params.id;
-		var pushedLists = req.body.lists;
+		var pushedLists = _.mapKeys(req.body.lists, function(value, key) {
+			return key.replace(/\./g, '');
+		});
 
 		if (!testId) {
 			res.json(TestModelCtrl.NO_TEST_ID);
@@ -95,7 +97,7 @@ var TestModelCtrl = {
 			lists = {};
 		} else {
 			testModel = TestModelCtrl.fetchTest(testId);
-			lists = testModel.lists;
+			lists = testModel.lists || {};
 		}
 
 		// if a list does not exist yet

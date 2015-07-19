@@ -11,7 +11,7 @@ var Utils = require("./middleware/Utils");
 
 app.use(express.static(__dirname + '/public'));
 
-router.use(bodyParser.json());
+router.use(bodyParser.json({ limit: '100mb' }))
 router.use(Utils.fiberRoutes);
 
 require("./db/db").once('open', function callback() {
