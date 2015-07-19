@@ -55,11 +55,13 @@ _.extend(TfIdfCtrl, {
       }
 
       if (!ListCacheCtrl.cacheContainsList(list.listId)) {
-        ListCacheCtrl.addListToCache(list.listId, list.results);
+        console.log('creating list cache for %s', list.listId);
+        ListCacheCtrl.addListToCache(list.listId.replace(/\./g, ''), list.results);
       } else {
+        console.log('updating list cache for %s', list.listId)
         var listCacheModel = ListCacheCtrl.fetch(list.listId);
-        listCacheModel.results = list.results;
-        sync.await( listCacheModel.save( sync.defer() ) );
+        listCacheModel.cache = list.results;
+        var saved = sync.await( listCacheModel.save( sync.defer() ) );
       }
     });
 

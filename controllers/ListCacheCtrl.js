@@ -28,7 +28,7 @@ _.extend(ListCacheCtrl, {
 	},
 
 	addListToCache : function(listId, results) {
-		var cachedList = new ListCache({ listId: listId, cache: results })
+		var cachedList = new ListCache({ listId: listId.replace('.', '\.'), cache: results })
 		return sync.await( cachedList.save(sync.defer()) );
 	}
 });

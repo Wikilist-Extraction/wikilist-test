@@ -75,7 +75,9 @@ var TestModelCtrl = {
 
 	createTestResultSet : function(req, res) {
 		var testId = req.params.id;
-		var pushedLists = req.body.lists;
+		var pushedLists = _.mapKeys(req.body.lists, function(value, key) {
+			return key.replace(/\./g, '');
+		});
 
 		if (!testId) {
 			res.json(TestModelCtrl.NO_TEST_ID);

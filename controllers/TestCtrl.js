@@ -107,10 +107,10 @@ var TestCtrl = {
 
     var tests = TestModelCtrl.fetchTest(testId);
     var allResults = TestCtrl.buildResults(tests);
-    var firstResults = _.map(allResults, function(versions) {
-      return versions[0];
+    var lastResults = _.map(allResults, function(versions) {
+      return versions[versions.length - 1];
     });
-    res.json(firstResults);
+    res.json(lastResults);
   },
 
   getAllResults: function(req, res) {
