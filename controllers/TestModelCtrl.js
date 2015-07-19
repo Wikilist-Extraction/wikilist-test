@@ -97,7 +97,7 @@ var TestModelCtrl = {
 			lists = {};
 		} else {
 			testModel = TestModelCtrl.fetchTest(testId);
-			lists = testModel.lists;
+			lists = testModel.lists || {};
 		}
 
 		// if a list does not exist yet
