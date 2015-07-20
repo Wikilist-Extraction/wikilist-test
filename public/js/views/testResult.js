@@ -130,11 +130,15 @@ const TestResult = React.createClass({
 
       const mismatchSum = filteredTestResults.reduce(((acc, testResult) => testResult.declinedTypes.length + acc), 0)
       const actualMismatches = filteredTestResults.reduce(((acc, testResult) => this.getMatches(testResult.declinedTypes, testResult.result) + acc), 0)
-      const mismatchPercent =  mismatchSum > 0 ? 1 - (actualMismatches / mismatchSum) : 0
+      const mismatchPercent =  mismatchSum > 0 ? (actualMismatches / mismatchSum) : 0
+
+
+      const precision = actualMatches / (actualMismatches + actualMatches)
 
       body = (
         <div>
           <Button onClick={this.props.onGoBack}>Back</Button>
+          <span>Precision: {precision}</span>
           <Table hover>
             <thead>
               <th>List</th>
