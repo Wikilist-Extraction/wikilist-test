@@ -1,15 +1,12 @@
 import React from 'react/addons';
 import _ from 'lodash';
-import {Button, Table, Glyphicon} from 'react-bootstrap';
+import {Button, Table, Glyphicon, Alert} from 'react-bootstrap';
 
 import TypeListItem from '../components/typeListItem';
 
-// import listStore from '../stores/listStore';
-// import listActions from '../actions/listActions';
-
 const listUrl = '/api/tfidf/';
-const postUrl = '/api/evaluation';
-
+const evaluationUrl = '/api/evaluation';
+console.log(evaluationUrl);
 const wikiPrefix = 'http://en.wikipedia.org/wiki/';
 
 const Validation = React.createClass({
@@ -17,6 +14,7 @@ const Validation = React.createClass({
   getInitialState() {
     return {
       types: [],
+      isWrongParsed: false,
       approvedTypes: [],
       declinedTypes: [],
       hasFetchedList: false,
@@ -30,6 +28,7 @@ const Validation = React.createClass({
     const tfIdfUrl = listUrl + this.props.listName;
     fetch(tfIdfUrl)
       .then(response => response.json())
+      // .then(json => json.filter())
       .then(json => this.setState({types: json, hasFetchedList: true}))
       .catch(error => {
         this.setState({
@@ -39,9 +38,8 @@ const Validation = React.createClass({
         });
       });
 
-      const evaluationUrl = postUrl + "/" + this.props.listName
-      console.log(evaluationUrl)
-      fetch(evaluationUrl)
+      const url = evaluationUrl + "/" + this.props.listName;
+      fetch(url)
         .then(response => response.json())
         .then(json => this.setState({
           approvedTypes: json.approvedTypes,
@@ -107,7 +105,7 @@ const Validation = React.createClass({
     };
     console.log(JSON.stringify(postObj));
 
-    fetch(postUrl, {
+    fetch(evaluationUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -116,6 +114,33 @@ const Validation = React.createClass({
     });
 
     this.props.onNext();
+  },
+
+  putCorrectnessState(isWrongParsed) {
+    const postObj = {
+      isWrongParsed: isWrongParsed
+    };
+
+    const url  = evaluationUrl + "/" + this.props.listName;
+
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postObj)
+    }).then(response => response.json())
+      .then(json => console.log(json));
+  },
+
+  onParsedWrong() {
+    this.putCorrectnessState(true);
+    this.setState({isWrongParsed: true});
+  },
+
+  onParsedCorrect() {
+    this.putCorrectnessState(false);
+    this.setState({isWrongParsed: false});
   },
 
   render() {
@@ -166,9 +191,18 @@ const Validation = React.createClass({
       body = <p>Fetching types...</p>
     }
 
+    const alert =
+      <Alert bsStyle="danger">
+        This list got probably parsed wrong!
+        <Button onClick={this.onParsedCorrect}>Was Parsed Correctly!</Button>
+      </Alert>;
+    const wrongParsedButton = <Button className="pull-right" onClick={this.onParsedWrong}>List is wrong parsed!</Button>;
+
+
     return (
       <div>
         <h2><a href={wikiPrefix + listName}>{listName}</a></h2>
+        {this.state.isWrongParsed ? alert : wrongParsedButton}
         {body}
         <Button className="pull-right" onClick={this.onSubmit} disabled={buttonDisabled}>Submit</Button>
       </div>

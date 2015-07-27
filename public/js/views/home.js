@@ -5,6 +5,9 @@ import Validation from './validation';
 
 const listsUrl = '/api/lists';
 
+// clamp polyfill
+(function(){Math.clamp=function(a,b,c){return Math.max(b,Math.min(c,a));}})();
+
 const Home = React.createClass({
 
   getInitialState() {
@@ -33,11 +36,11 @@ const Home = React.createClass({
   },
 
   isFirst() {
-    return this.state.currentListNumber == 0;
+    return this.state.currentListNumber <= 0;
   },
 
   isLast() {
-    return this.state.currentListNumber == this.state.lists.length - 1;
+    return this.state.currentListNumber >= this.state.lists.length - 1;
   },
 
   selectList(index) {
@@ -54,9 +57,7 @@ const Home = React.createClass({
 
 
     let element;
-    if (currentListNumber >= lists.length) {
-      element = <p>Validation finished</p>
-    } else if (this.state.hasFetched) {
+    if (this.state.hasFetched) {
       const listName = lists[currentListNumber];
 
       const dropdownItems = lists.map((elem, index) => {
@@ -65,7 +66,7 @@ const Home = React.createClass({
 
       const currentListNumberValueLink = {
         value: currentListNumber,
-        requestChange: this.selectList
+        requestChange: (input) => this.selectList(Math.clamp(parseInt(input), 0, this.state.lists.length - 1))
       }
 
       element = (

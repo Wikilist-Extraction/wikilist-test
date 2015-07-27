@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var ManualEvaluationModel = (function() {
 	var ManualEvaluationSchema = mongoose.Schema({
 		listId : { type: String, index: { unique: true }},
+		isWrongParsed: { type: Boolean, default: false },
 		approvedTypes : [String],
 		declinedTypes : [String]
 	});
