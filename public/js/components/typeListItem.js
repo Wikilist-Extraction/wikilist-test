@@ -64,10 +64,12 @@ const TypeListItem = React.createClass({
 
     // <td>{typeObj.label}</td>
     return (
-      <tr>
+      <tr className={this.props.inCluster ? 'inCluster' : ''}>
         <td><a href={typeObj.typeUri} target='_blank'>{typeObj.typeUri}</a></td>
         <td>{typeObj.count}</td>
         <td>{typeObj.tfIdf}</td>
+        <td>{this.props.deviationTfIdf}</td>
+        <td>{this.props.deviationDistance}</td>
         <td><Button bsStyle={approveButtonStyle} onClick={this.handleOnClickApprove} disabled={this.state.isDeclined}>{approveButtonName}</Button></td>
         <td><Button bsStyle={declineButtonStyle} onClick={this.handleOnClickDecline} disabled={this.state.isApproved}>{declineButtonName}</Button></td>
       </tr>

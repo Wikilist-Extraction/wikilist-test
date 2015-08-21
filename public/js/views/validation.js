@@ -1,6 +1,7 @@
 import React from 'react/addons';
 import _ from 'lodash';
 import {Button, Table, Glyphicon, Alert} from 'react-bootstrap';
+import DBSCAN from '../lib/jDBSCAN/jDBSCAN';
 
 import TypeListItem from '../components/typeListItem';
 
@@ -157,9 +158,75 @@ const Validation = React.createClass({
     } else if (state.hasFetchedList && state.hasFetchedEvaluation) {
 
       const sortedTypeObjects = _.sortByOrder(state.types, 'tfIdf', false);
-      const typeRows = sortedTypeObjects.map(typeObject => {
+
+      // helper
+      const buildDistribution = (amount, values, count, mean, stdDeviation) => {
+        return _.reduce(values, (acc,  score) => {
+          if ((score < mean + amount * stdDeviation) && (score > mean - amount * stdDeviation)) {
+            return acc + 1 / count;
+          }
+
+          return acc;
+        }, 0) * 100;
+      }
+
+      // tf-idf
+      const tfIdfMean = _.reduce(state.types, (acc, type) => { return acc + type.tfIdf / state.types.length; }, 0);
+      const stdDeviationTfIdf = Math.sqrt( _.reduce(state.types, (acc, type) => { return acc + Math.pow((type.tfIdf - tfIdfMean), 2) / state.types.length; }, 0) );
+
+      const withinStdDeviationTfIdf = buildDistribution(1, _.pluck(state.types, 'tfIdf'), state.types.length, tfIdfMean, stdDeviationTfIdf);
+      const within2StdDeviationTfIdf = buildDistribution(2, _.pluck(state.types, 'tfIdf'), state.types.length, tfIdfMean, stdDeviationTfIdf);
+
+      // distances
+      let distanceSum = 0;
+      let distances = [];
+      for (let i = 1; i < state.types.length; i++) {
+        console.log(sortedTypeObjects[i].tfIdf);
+        const distance = sortedTypeObjects[i-1].tfIdf - sortedTypeObjects[i].tfIdf;
+        distanceSum += distance;
+        distances.push(distance);
+      }
+      const distanceMean = distanceSum / (state.types.length - 1);
+
+      let varianceDistance = 0;
+      for (let i = 1; i < state.types.length; i++) {
+        const distance = sortedTypeObjects[i-1].tfIdf - sortedTypeObjects[i].tfIdf;
+        varianceDistance += Math.pow(distance - distanceMean, 2) / (state.types.length - 1);
+      }
+      const stdDeviationDistance = Math.sqrt(varianceDistance);
+
+      const withinStdDeviationDistance = buildDistribution(1, distances, state.types.length - 1, distanceMean, stdDeviationDistance);
+      const within2StdDeviationDistance = buildDistribution(2, distances, state.types.length - 1, distanceMean, stdDeviationDistance);
+
+      // dbscan
+      let points = _(sortedTypeObjects)
+        .pluck('tfIdf')
+        .map((score) => { return { x: score, y: 0 }; })
+        .value();
+
+      let dbscanner = DBSCAN()
+        .eps(stdDeviationTfIdf*1.2)
+        .minPts(1)
+        .distance('EUCLIDEAN')
+        .data(points);
+
+      const pointsInCluster = dbscanner();
+      console.log('Variance', varianceDistance);
+      console.log('Points', points);
+      console.log('Distances', distances);
+      console.log('Clustered Points', pointsInCluster);
+      console.log('Clusters', dbscanner.getClusters());
+
+      // build rows
+      const typeRows = sortedTypeObjects.map((typeObject, index) => {
         const isApproved = _.findIndex(state.approvedTypes, (uri) => uri === typeObject.typeUri) >= 0;
         const isDeclined = _.findIndex(state.declinedTypes, (uri) => uri === typeObject.typeUri) >= 0;
+        const deviationFromTfIdfMean = typeObject.tfIdf - tfIdfMean;
+
+        let deviationFromDistanceMean = null;
+        if (index + 1 < state.types.length) {
+          deviationFromDistanceMean = (sortedTypeObjects[index+1].tfIdf - typeObject.tfIdf) - distanceMean;
+        }
 
         return <TypeListItem
           typeObject={typeObject}
@@ -169,23 +236,41 @@ const Validation = React.createClass({
           onUnDecline={this.onUnDeclineType}
           isDeclined={isDeclined}
           isApproved={isApproved}
-          key={typeObject.typeUri} />;
+          key={typeObject.typeUri}
+          deviationTfIdf={deviationFromTfIdfMean}
+          deviationDistance={deviationFromDistanceMean}
+          inCluster={pointsInCluster[index] <= 1}/>;
       });
       // <th>Label</th>
       body = (
-        <Table>
-          <thead>
-            <th>Uri</th>
-            <th>count</th>
-            <th>tfIdf</th>
-            <th></th>
-            <th></th>
-          </thead>
-          <tbody>
-            {typeRows}
-          </tbody>
-        </Table>
-      )
+        <div>
+          <div class="header-row">
+            <p><strong>TfIdf</strong> Mean: {tfIdfMean}</p>
+            <p>Standard Deviation: {stdDeviationTfIdf}</p>
+            <p>Distribution within one Standard Deviation: {parseInt(withinStdDeviationTfIdf*100) / 100}%</p>
+            <p>Distribution within two Standard Deviation: {parseInt(within2StdDeviationTfIdf*100) / 100}%</p>
+            <p></p>
+            <p><strong>Distance</strong> Mean: {distanceMean}</p>
+            <p>Standard Deviation: {stdDeviationDistance}</p>
+            <p>Distribution within one Standard Deviation: {parseInt(withinStdDeviationDistance*100) / 100}%</p>
+            <p>Distribution within two Standard Deviation: {parseInt(within2StdDeviationDistance*100) / 100}%</p>
+          </div>
+          <Table>
+            <thead>
+              <th>Uri</th>
+              <th>count</th>
+              <th>tfIdf</th>
+              <th>Deviation from TfIdf Mean</th>
+              <th>Deviation from Distance Mean</th>
+              <th></th>
+              <th></th>
+            </thead>
+            <tbody>
+              {typeRows}
+            </tbody>
+          </Table>
+        </div>
+      );
       buttonDisabled = false;
     } else {
       body = <p>Fetching types...</p>

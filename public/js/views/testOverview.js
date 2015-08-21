@@ -1,3 +1,5 @@
+'use strict';
+
 import React from 'react';
 import {Table, Button} from 'react-bootstrap';
 
@@ -26,7 +28,7 @@ var TestOverview = React.createClass({
   startTest(name) {
     fetch(startTestUrl + name)
       .then(response => console.log(response))
-      .catch(error => console.log(error))
+      .catch(error => console.log(error));
   },
 
   showResultFor(name) {
