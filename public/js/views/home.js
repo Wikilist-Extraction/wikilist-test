@@ -79,7 +79,7 @@ const Home = React.createClass({
             </DropdownButton>
             <Input type="number" valueLink={currentListNumberValueLink}/>
           </ButtonGroup>
-          <Validation listName={listName} onNext={this.onNext} key={listName}/>
+          <this.props.inner listName={listName} onNext={this.onNext} key={listName}/>
         </div>
       )
     } else {

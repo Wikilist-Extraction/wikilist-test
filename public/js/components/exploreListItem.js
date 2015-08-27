@@ -1,7 +1,7 @@
 import React from 'react';
 import {ListGroupItem, Button} from 'react-bootstrap';
 
-const TypeListItem = React.createClass({
+const ExploreListItem = React.createClass({
 
   getInitialState() {
     return {
@@ -64,14 +64,15 @@ const TypeListItem = React.createClass({
 
     // <td>{typeObj.label}</td>
     return (
-      <tr>
+      <tr className={this.props.inCluster ? 'inCluster' : ''}>
         <td><a href={typeObj.typeUri} target='_blank'>{typeObj.typeUri}</a></td>
         <td>{typeObj.count}</td>
-        <td><Button bsStyle={approveButtonStyle} onClick={this.handleOnClickApprove} disabled={this.state.isDeclined}>{approveButtonName}</Button></td>
-        <td><Button bsStyle={declineButtonStyle} onClick={this.handleOnClickDecline} disabled={this.state.isApproved}>{declineButtonName}</Button></td>
+        <td>{typeObj.tfIdf}</td>
+        <td>{this.props.deviationTfIdf}</td>
+        <td>{this.props.deviationDistance}</td>
       </tr>
     );
   }
 });
 
-module.exports = TypeListItem;
+module.exports = ExploreListItem;

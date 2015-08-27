@@ -13,8 +13,8 @@ class App extends React.Component {
         <Navbar brand='Wikilist Tester'>
           <Nav>
             <NavItemLink to="home" eventKey={1}>Validation</NavItemLink>
-            <NavItemLink to="testing" eventKey={2}>Testing</NavItemLink>
-            <NavItemLink to="upload" eventKey={2}>Upload</NavItemLink>
+            <NavItemLink to="explore" eventKey={2}>Exploring</NavItemLink>
+            <NavItemLink to="testing" eventKey={3}>Testing</NavItemLink>
           </Nav>
         </Navbar>
         <div className='container'>
