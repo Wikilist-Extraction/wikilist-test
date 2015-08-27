@@ -1,4 +1,0 @@
-
-module.exports = ["http://dbpedia.org/resource/Cuilcagh", "http://dbpedia.org/resource/Meenard_Mountain", "http://dbpedia.org/resource/Mullaghaneany", "http://dbpedia.org/resource/Mullaghclogha", "http://dbpedia.org/resource/Dart_Mountain", "http://dbpedia.org/resource/Sawel_Mountain", "http://dbpedia.org/resource/Shanlieve", "http://dbpedia.org/resource/Eagle_Mountain_(Mourne)", "http://dbpedia.org/resource/Slieve_Muck", "http://dbpedia.org/resource/Cove_Mountain", "http://dbpedia.org/resource/Slievelamagan", "http://dbpedia.org/resource/Slieve_Loughshannagh", "http://dbpedia.org/resource/Slieve_Meelmore", "http://dbpedia.org/resource/Slieve_Meelbeg", "http://dbpedia.org/resource/Slieve_Bearnagh", "http://dbpedia.org/resource/Slieve_Binnian", "http://dbpedia.org/resource/Slieve_Commedagh", "http://dbpedia.org/resource/Chimney_Rock_Mountain", "http://dbpedia.org/resource/Slieve_Donard"]
-
-          
