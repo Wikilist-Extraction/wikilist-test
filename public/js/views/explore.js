@@ -153,7 +153,7 @@ const Explore = React.createClass({
           key={typeObject.typeUri}
           deviationTfIdf={deviationFromTfIdfMean}
           deviationDistance={deviationFromDistanceMean}
-          inCluster={pointsInCluster[index] <= 1}/>;
+          inCluster={pointsInCluster[index] == 1}/>;
       });
       // <th>Label</th>
       body = (
