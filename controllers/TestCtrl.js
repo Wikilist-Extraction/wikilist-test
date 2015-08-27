@@ -45,6 +45,9 @@ var TestCtrl = {
       .pick(function(versions, listId) {
         return ManualEvaluationsCtrl.getEvaluation(listId) !== null
       })
+      .pick(function(versions, listId) {
+        return !ManualEvaluationsCtrl.getEvaluation(listId).isWrongParsed
+      })
       .map(function(versions, listId) {
         var approvedTypes = ManualEvaluationsCtrl.getApprovedTypes(listId);
         var declinedTypes = ManualEvaluationsCtrl.getDeclinedTypes(listId);
