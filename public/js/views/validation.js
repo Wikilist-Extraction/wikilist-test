@@ -44,6 +44,7 @@ const Validation = React.createClass({
         .then(json => this.setState({
           approvedTypes: json.approvedTypes,
           declinedTypes: json.declinedTypes,
+          isWrongParsed: json.isWrongParsed,
           hasFetchedEvaluation: true,
         }))
         .catch(error => {
