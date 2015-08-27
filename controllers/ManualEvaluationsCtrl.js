@@ -65,9 +65,15 @@ var ManualEvaluationsCtrl = {
 
 	update : function (req, res) {
 		delete req.body._id;
-		ManualEvaluation.update({listId:req.params.id}, req.body, function (err, manualevaluation) {
-			console.log('Update data for:', manualevaluation.listId);
-			res.json(manualevaluation);
+		ManualEvaluation.update({listId:req.params.id}, req.body, function (err, numAffected) {
+			console.log('Update affected:', numAffected);
+			if (numAffected >= 1) {
+				res.json({message: "success"})
+			} else if (err) {
+				res.json({message: err });
+			} else {
+				res.json({message: "nothing updated"});
+			}
 		});
 	},
 
