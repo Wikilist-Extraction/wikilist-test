@@ -119,7 +119,7 @@ const Explore = React.createClass({
         .value();
 
       let dbscanner = DBSCAN()
-        .eps(stdDeviationTfIdf*1.2)
+        .eps(distanceMean*1.2)
         .minPts(1)
         .distance('EUCLIDEAN')
         .data(points);
