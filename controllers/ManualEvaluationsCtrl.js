@@ -65,7 +65,7 @@ var ManualEvaluationsCtrl = {
 
 	update : function (req, res) {
 		delete req.body._id;
-		ManualEvaluation.update({listId:req.params.id}, req.body, function (err, numAffected) {
+		ManualEvaluation.update({listId: req.params.id}, req.body, {upsert: true}, function (err, numAffected) {
 			console.log('Update affected:', numAffected);
 			if (numAffected >= 1) {
 				res.json({message: "success"})
