@@ -8,7 +8,7 @@ const listsUrl = '/api/lists';
 const ResultUpload = React.createClass({
 
   handleSubmit() {
-    
+
   },
 
   render() {

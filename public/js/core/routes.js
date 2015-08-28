@@ -20,8 +20,9 @@ var wrapComponent = function(Component, props) {
 
 var routes = (
   <Route name="app" path="/" handler={Layout}>
-    <Route name="home" handler={wrapComponent(Home, { inner: Validation })}/>
-    <Route name="explore" handler={wrapComponent(Home, { inner: Explore })}/>
+    <Route name="home" path="/home" handler={wrapComponent(Home, { inner: Validation })}/>
+    <Route name="explore" path="/explore" handler={wrapComponent(Home, { inner: Explore })}/>
+    <Route name="exploreWithListId" path="/explore/:listId" handler={wrapComponent(Home, { inner: Explore })}/>
     <Route name="testing" handler={TestOverview}/>
     <Route name="upload" handler={ResultUpload}/>
     <DefaultRoute handler={wrapComponent(Home, { inner: Validation })}/>

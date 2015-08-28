@@ -10,6 +10,10 @@ const listsUrl = '/api/lists';
 
 const Home = React.createClass({
 
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+
   getInitialState() {
     return {
       lists: [],
@@ -21,7 +25,14 @@ const Home = React.createClass({
   componentDidMount() {
     fetch(listsUrl)
       .then(response => response.json())
-      .then(json => this.setState({lists: json, hasFetched: true}))
+      .then(json => this.setState({lists: json, hasFetched: true}, () => {
+        if (this.context.router.getCurrentParams().listId != null) {
+          const newListNumber = this.state.lists.indexOf(this.context.router.getCurrentParams().listId)
+          if (newListNumber != -1) {
+            this.setState({currentListNumber: newListNumber})
+          }
+        }
+      }))
       .catch(error => console.log(error));
   },
 

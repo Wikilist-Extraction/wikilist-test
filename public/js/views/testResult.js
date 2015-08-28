@@ -1,40 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
 import {Button, Table, Glyphicon, Panel, Badge, ListGroup, ListGroupItem, Col, Row} from 'react-bootstrap';
+import ButtonLink from 'react-router-bootstrap';
 
 const testResultUrl = '/api/test/result/';
 const wikiPrefix = 'http://en.wikipedia.org/wiki/';
-
-const mock = [
-    {
-      "listId": "List_of_Donald_Ross-designed_courses",
-      "declinedTypes": [
-        "http://dbpedia.org/ontology/Settlement",
-        "http://dbpedia.org/ontology/City",
-        "http://dbpedia.org/ontology/Town",
-        "http://dbpedia.org/ontology/Village",
-        "http://dbpedia.org/ontology/HistoricPlace",
-        "http://dbpedia.org/ontology/Building",
-        "http://dbpedia.org/ontology/ArchitecturalStructure",
-        "http://dbpedia.org/ontology/School",
-        "http://dbpedia.org/ontology/EducationalInstitution"
-        ],
-      "approvedTypes": [
-        "http://dbpedia.org/ontology/PopulatedPlace",
-        "http://dbpedia.org/ontology/Place",
-        "http://dbpedia.org/ontology/GolfCourse",
-        "http://dbpedia.org/ontology/SportFacility"
-      ],
-      "result": [
-        "http://dbpedia.org/ontology/EducationalInstitution",
-        "http://dbpedia.org/ontology/PopulatedPlace",
-        "http://dbpedia.org/ontology/Place",
-        "http://dbpedia.org/ontology/GolfCourse",
-        "http://dbpedia.org/ontology/SportFacility"
-      ]
-    }
-];
-
 
 const TestResult = React.createClass({
 
@@ -183,6 +153,7 @@ const TestResult = React.createClass({
         <div>
           <Button onClick={this.showAllResults}>Back</Button>
           <h2><a href={wikiPrefix + id}>{id}</a></h2>
+          <ButtonLink to="exploreWithListId" params={{listId: id}}>Show Explore Page</ButtonLink>
           <Row>
             <Col sm={6}>
               <h3>Approved Types</h3>
