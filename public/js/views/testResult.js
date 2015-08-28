@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import {Button, Table, Glyphicon, Panel, Badge, ListGroup, ListGroupItem, Col, Row} from 'react-bootstrap';
-import ButtonLink from 'react-router-bootstrap';
+import {ButtonLink} from 'react-router-bootstrap';
 
 const testResultUrl = '/api/test/result/';
 const wikiPrefix = 'http://en.wikipedia.org/wiki/';
