@@ -177,7 +177,6 @@ const Validation = React.createClass({
         <Table>
           <thead>
             <th>Uri</th>
-            <th>count</th>
             <th></th>
             <th></th>
           </thead>
