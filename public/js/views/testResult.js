@@ -112,13 +112,21 @@ const TestResult = React.createClass({
       const actualMismatches = filteredTestResults.reduce(((acc, testResult) => this.getMatches(testResult.declinedTypes, testResult.result) + acc), 0)
       const mismatchPercent =  mismatchSum > 0 ? (actualMismatches / mismatchSum) : 0
 
+      // get this with sumApprovedTypesQuery.js
+      const summedApprovedTypes = 2581
+      // number of lists we created the dump from
+      const numberOfAllLists = 2000
 
       const precision = actualMatches / (actualMismatches + actualMatches)
+      const recall = actualMatches / (actualMatches + summedApprovedTypes)
+      const listRate = filteredTestResults.length / numberOfAllLists
 
       body = (
         <div>
           <Button onClick={this.props.onGoBack}>Back</Button>
           <span>Precision: {precision}</span>
+          <span>Recall: {recall}</span>
+          <span>Lists with result rate: {listRate}</span>
           <Button onClick={this.toggleShowFiltered}>{filterButtonText}</Button>
           <Table hover>
             <thead>
