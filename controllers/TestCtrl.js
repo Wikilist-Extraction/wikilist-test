@@ -40,13 +40,17 @@ var TestCtrl = {
     };
   },
 
-  buildResults: function(tests) {
+  buildResults: function(tests, filterWrongParsed) {
     return _(tests.lists)
       .pick(function(versions, listId) {
         return ManualEvaluationsCtrl.getEvaluation(listId) !== null
       })
       .pick(function(versions, listId) {
-        return !ManualEvaluationsCtrl.getEvaluation(listId).isWrongParsed
+        if (filterWrongParsed) {
+          return !ManualEvaluationsCtrl.getEvaluation(listId).isWrongParsed
+        } else {
+          return true;
+        }
       })
       .map(function(versions, listId) {
         var approvedTypes = ManualEvaluationsCtrl.getApprovedTypes(listId);
@@ -109,11 +113,21 @@ var TestCtrl = {
     }
 
     var tests = TestModelCtrl.fetchTest(testId);
-    var allResults = TestCtrl.buildResults(tests);
-    var lastResults = _.map(allResults, function(versions) {
+
+    var allResults = TestCtrl.buildResults(tests, false);
+    var allResultsFiltered = TestCtrl.buildResults(tests, true);
+
+    var lastResultsAll = _.map(allResults, function(versions) {
       return versions[versions.length - 1];
     });
-    res.json(lastResults);
+    var lastResultsFiltered = _.map(allResultsFiltered, function(versions) {
+      return versions[versions.length - 1];
+    });
+
+    res.json({
+      all: lastResultsAll,
+      filtered: lastResultsFiltered
+    });
   },
 
   getAllResults: function(req, res) {

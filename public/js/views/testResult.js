@@ -13,7 +13,9 @@ const TestResult = React.createClass({
       showResult: false,
       showResultId: '',
       fetchedResults: false,
-      testResults: []
+      testResults: [],
+      testResultsFiltered: [],
+      showFiltered: false
     }
   },
 
@@ -21,7 +23,8 @@ const TestResult = React.createClass({
     fetch(testResultUrl + this.props.testId)
       .then(response => response.json())
       .then(json => this.setState({
-        testResults: json
+        testResults: json.all,
+        testResultsFiltered: json.filtered
       }))
       .catch(error => console.log(error));
   },
@@ -75,8 +78,15 @@ const TestResult = React.createClass({
     )
   },
 
+  toggleShowFiltered() {
+    this.setState((prevState, props) => {
+      return { showFiltered: !prevState.showFiltered };
+    });
+  },
+
   render() {
-    const testResults = this.state.testResults;
+    const testResults = this.state.showFiltered ? this.state.testResultsFiltered : this.state.testResults;
+    const filterButtonText = this.state.showFiltered ? "Show UnFiltered" : "Show Filtered";
 
     if ('status' in testResults) {
       return (
@@ -109,6 +119,7 @@ const TestResult = React.createClass({
         <div>
           <Button onClick={this.props.onGoBack}>Back</Button>
           <span>Precision: {precision}</span>
+          <Button onClick={this.toggleShowFiltered}>{filterButtonText}</Button>
           <Table hover>
             <thead>
               <th>List</th>
