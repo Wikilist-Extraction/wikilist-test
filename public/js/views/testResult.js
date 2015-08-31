@@ -121,12 +121,16 @@ const TestResult = React.createClass({
       const recall = actualMatches / (actualMatches + summedApprovedTypes)
       const listRate = filteredTestResults.length / numberOfAllLists
 
+      function toPercent(num) {
+        return (num * 100).toFixed(2) + "%"
+      }
+
       body = (
         <div>
           <Button onClick={this.props.onGoBack}>Back</Button>
-          <span>Precision: <strong>{precision}</strong>   </span>
-          <span>Recall: <strong>{recall}</strong>   </span>
-          <span>Lists with result rate: {listRate}  </span>
+          <span>Precision: <strong>{toPercent(precision)}</strong>   </span>
+          <span>Recall: <strong>{toPercent(recall)}</strong>   </span>
+          <span>Lists with result rate: {toPercent(listRate)}  </span>
           <Button onClick={this.toggleShowFiltered}>{filterButtonText}</Button>
           <Table hover>
             <thead>
