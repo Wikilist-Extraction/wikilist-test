@@ -124,9 +124,9 @@ const TestResult = React.createClass({
       body = (
         <div>
           <Button onClick={this.props.onGoBack}>Back</Button>
-          <span>Precision: {precision}</span>
-          <span>Recall: {recall}</span>
-          <span>Lists with result rate: {listRate}</span>
+          <span>Precision: <strong>{precision}</strong>   </span>
+          <span>Recall: <strong>{recall}</strong>   </span>
+          <span>Lists with result rate: {listRate}  </span>
           <Button onClick={this.toggleShowFiltered}>{filterButtonText}</Button>
           <Table hover>
             <thead>
