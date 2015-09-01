@@ -1,40 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
 import {Button, Table, Glyphicon, Panel, Badge, ListGroup, ListGroupItem, Col, Row} from 'react-bootstrap';
+import {ButtonLink} from 'react-router-bootstrap';
 
 const testResultUrl = '/api/test/result/';
 const wikiPrefix = 'http://en.wikipedia.org/wiki/';
-
-const mock = [
-    {
-      "listId": "List_of_Donald_Ross-designed_courses",
-      "declinedTypes": [
-        "http://dbpedia.org/ontology/Settlement",
-        "http://dbpedia.org/ontology/City",
-        "http://dbpedia.org/ontology/Town",
-        "http://dbpedia.org/ontology/Village",
-        "http://dbpedia.org/ontology/HistoricPlace",
-        "http://dbpedia.org/ontology/Building",
-        "http://dbpedia.org/ontology/ArchitecturalStructure",
-        "http://dbpedia.org/ontology/School",
-        "http://dbpedia.org/ontology/EducationalInstitution"
-        ],
-      "approvedTypes": [
-        "http://dbpedia.org/ontology/PopulatedPlace",
-        "http://dbpedia.org/ontology/Place",
-        "http://dbpedia.org/ontology/GolfCourse",
-        "http://dbpedia.org/ontology/SportFacility"
-      ],
-      "result": [
-        "http://dbpedia.org/ontology/EducationalInstitution",
-        "http://dbpedia.org/ontology/PopulatedPlace",
-        "http://dbpedia.org/ontology/Place",
-        "http://dbpedia.org/ontology/GolfCourse",
-        "http://dbpedia.org/ontology/SportFacility"
-      ]
-    }
-];
-
 
 const TestResult = React.createClass({
 
@@ -43,7 +13,9 @@ const TestResult = React.createClass({
       showResult: false,
       showResultId: '',
       fetchedResults: false,
-      testResults: []
+      testResults: [],
+      testResultsFiltered: [],
+      showFiltered: false
     }
   },
 
@@ -51,7 +23,8 @@ const TestResult = React.createClass({
     fetch(testResultUrl + this.props.testId)
       .then(response => response.json())
       .then(json => this.setState({
-        testResults: json
+        testResults: json.all,
+        testResultsFiltered: json.filtered
       }))
       .catch(error => console.log(error));
   },
@@ -105,8 +78,15 @@ const TestResult = React.createClass({
     )
   },
 
+  toggleShowFiltered() {
+    this.setState((prevState, props) => {
+      return { showFiltered: !prevState.showFiltered };
+    });
+  },
+
   render() {
-    const testResults = this.state.testResults;
+    const testResults = this.state.showFiltered ? this.state.testResultsFiltered : this.state.testResults;
+    const filterButtonText = this.state.showFiltered ? "Show UnFiltered" : "Show Filtered";
 
     if ('status' in testResults) {
       return (
@@ -132,13 +112,26 @@ const TestResult = React.createClass({
       const actualMismatches = filteredTestResults.reduce(((acc, testResult) => this.getMatches(testResult.declinedTypes, testResult.result) + acc), 0)
       const mismatchPercent =  mismatchSum > 0 ? (actualMismatches / mismatchSum) : 0
 
+      // get this with sumApprovedTypesQuery.js
+      const summedApprovedTypes = 2581
+      // number of lists we created the dump from
+      const numberOfAllLists = 2000
 
       const precision = actualMatches / (actualMismatches + actualMatches)
+      const recall = actualMatches / (actualMatches + summedApprovedTypes)
+      const listRate = filteredTestResults.length / numberOfAllLists
+
+      function toPercent(num) {
+        return (num * 100).toFixed(2) + "%"
+      }
 
       body = (
         <div>
           <Button onClick={this.props.onGoBack}>Back</Button>
-          <span>Precision: {precision}</span>
+          <span>Precision: <strong>{toPercent(precision)}</strong>   </span>
+          <span>Recall: <strong>{toPercent(recall)}</strong>   </span>
+          <span>Lists with result rate: {toPercent(listRate)}  </span>
+          <Button onClick={this.toggleShowFiltered}>{filterButtonText}</Button>
           <Table hover>
             <thead>
               <th>List</th>
@@ -183,6 +176,7 @@ const TestResult = React.createClass({
         <div>
           <Button onClick={this.showAllResults}>Back</Button>
           <h2><a href={wikiPrefix + id}>{id}</a></h2>
+          <ButtonLink to="exploreWithListId" params={{listId: id}}>Show Explore Page</ButtonLink>
           <Row>
             <Col sm={6}>
               <h3>Approved Types</h3>

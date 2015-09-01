@@ -1,5 +1,6 @@
 import React from 'react';
 import {Glyphicon, ButtonGroup, Button, DropdownButton, MenuItem, Input} from 'react-bootstrap';
+import {Typeahead} from 'react-typeahead';
 import Validation from './validation';
 
 
@@ -9,6 +10,10 @@ const listsUrl = '/api/lists';
 (function(){Math.clamp=function(a,b,c){return Math.max(b,Math.min(c,a));}})();
 
 const Home = React.createClass({
+
+  contextTypes: {
+    router: React.PropTypes.func
+  },
 
   getInitialState() {
     return {
@@ -21,8 +26,19 @@ const Home = React.createClass({
   componentDidMount() {
     fetch(listsUrl)
       .then(response => response.json())
-      .then(json => this.setState({lists: json, hasFetched: true}))
+      .then(json => this.setState({lists: json, hasFetched: true}, () => {
+        if (this.context.router.getCurrentParams().listId != null) {
+          selectListById(this.context.router.getCurrentParams().listId)
+        }
+      }))
       .catch(error => console.log(error));
+  },
+
+  selectListById(id) {
+    const newListNumber = this.state.lists.indexOf(id)
+    if (newListNumber != -1) {
+      this.setState({currentListNumber: newListNumber})
+    }
   },
 
   onNext() {
@@ -77,6 +93,7 @@ const Home = React.createClass({
             <DropdownButton bsStyle='default' title='choose list' key={this.state.currentListNumber}>
               {dropdownItems}
             </DropdownButton>
+            <Typeahead options={this.state.lists} maxVisible={8} onOptionSelected={this.selectListById}/>
             <Input type="number" valueLink={currentListNumberValueLink}/>
           </ButtonGroup>
           <this.props.inner listName={listName} onNext={this.onNext} key={listName}/>

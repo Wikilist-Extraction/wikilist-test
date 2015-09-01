@@ -102,12 +102,12 @@ const Validation = React.createClass({
     const postObj = {
       listId: this.props.listName,
       approvedTypes: this.state.approvedTypes,
-      declinedTypes: this.state.declinedTypes
+      declinedTypes: this.state.declinedTypes,
     };
     console.log(JSON.stringify(postObj));
-
-    fetch(evaluationUrl, {
-      method: 'POST',
+    const url  = evaluationUrl + "/" + this.props.listName;
+    fetch(url, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -177,7 +177,6 @@ const Validation = React.createClass({
         <Table>
           <thead>
             <th>Uri</th>
-            <th>count</th>
             <th></th>
             <th></th>
           </thead>
